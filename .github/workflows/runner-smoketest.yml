@@ -1,0 +1,60 @@
+name: runner-smoke-test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Runner + 1Password end-to-end check
+    runs-on: [self-hosted, homelab, ubiquiti]
+
+    steps:
+      - name: Runner identity
+        run: |
+          echo "=== Runner host info ==="
+          echo "Hostname:      $(hostname)"
+          echo "Kernel:        $(uname -srmo)"
+          echo "User:          $(whoami)"
+          echo "Working dir:   $(pwd)"
+          echo "Runner name:   ${RUNNER_NAME:-unset}"
+          echo "Runner labels: self-hosted, homelab, ubiquiti"
+
+      - name: Network reachability check
+        run: |
+          echo "=== Outbound connectivity ==="
+          for host in api.github.com my.1password.com; do
+            if curl -sSf -o /dev/null -m 5 "https://${host}"; then
+              echo "OK    → https://${host}"
+            else
+              echo "FAIL  → https://${host}"
+              exit 1
+            fi
+          done
+
+      - name: Docker socket sanity
+        run: |
+          echo "=== Docker-from-runner check ==="
+          docker version --format 'Client: {{.Client.Version}}  Server: {{.Server.Version}}'
+          docker run --rm hello-world | head -20
+
+      - name: Load a secret from 1Password
+        uses: 1password/load-secrets-action@v4
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SVC_ACCT }}
+          TEST_SECRET: op://homelab-cicd/test-secret/password
+
+      - name: Confirm secret loaded and is masked
+        run: |
+          echo "=== 1Password load check ==="
+          if [ -z "${TEST_SECRET:-}" ]; then
+            echo "FAIL: TEST_SECRET is empty — check the op:// path and vault access"
+            exit 1
+          fi
+          echo "Loaded value (should print as ***): ${TEST_SECRET}"
+          echo "Length of secret (sanity check):    ${#TEST_SECRET}"
+          echo "SUCCESS: end-to-end chain working."
