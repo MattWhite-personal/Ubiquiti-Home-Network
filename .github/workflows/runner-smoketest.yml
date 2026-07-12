@@ -45,7 +45,7 @@ jobs:
         with:
           export-env: true
         env:
-          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SVC_ACCT }}
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           TEST_SECRET: op://homelab-cicd/test-item/password
 
       - name: Confirm secret loaded and is masked
