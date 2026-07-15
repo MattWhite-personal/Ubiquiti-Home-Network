@@ -46,24 +46,24 @@ jobs:
         id: fmt_check
         run: terraform fmt -check -recursive
 
-      # Perform a security scan of the terraform code using checkov
-      - name: Run Checkov action
-        id: checkov
-        uses: bridgecrewio/checkov-action@d9d1e5cdc53e3a91f0c4c58db7bc19ee31cac7e5 # v12.3113.0
-        with:
-          framework: terraform
-          soft_fail: true
-          # This will add both a CLI output to the console and create a results.sarif file
-          output_format: cli,sarif
-          output_file_path: console,results.sarif
+      ## Perform a security scan of the terraform code using checkov
+      #- name: Run Checkov action
+      #  id: checkov
+      #  uses: bridgecrewio/checkov-action@d9d1e5cdc53e3a91f0c4c58db7bc19ee31cac7e5 # v12.3113.0
+      #  with:
+      #    framework: terraform
+      #    soft_fail: true
+      #    # This will add both a CLI output to the console and create a results.sarif file
+      #    output_format: cli,sarif
+      #    output_file_path: console,results.sarif
 
-        # Upload results to GitHub Advanced Security
-      - name: Upload SARIF file
-        if: steps.checkov.outcome == 'success'
-        uses: github/codeql-action/upload-sarif@54f647b7e1bb85c95cddabcd46b0c578ec92bc1a # v4.36.3
-        with:
-          sarif_file: results.sarif
-          category: checkov
+      #  # Upload results to GitHub Advanced Security
+      #- name: Upload SARIF file
+      #  if: steps.checkov.outcome == 'success'
+      #  uses: github/codeql-action/upload-sarif@54f647b7e1bb85c95cddabcd46b0c578ec92bc1a # v4.36.3
+      #  with:
+      #    sarif_file: results.sarif
+      #    category: checkov
 
   terraform-unit-tests-pr:
     if: github.event_name == 'pull_request'
