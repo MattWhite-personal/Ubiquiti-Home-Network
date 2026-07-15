@@ -7,6 +7,6 @@ resource "unifi_network" "lan_network" {
   enabled             = true
   ipv6_interface_type = "pd"
   ipv6_pd_interface   = "wan"
-  ipv6_pd_prefix_id   = "999"
-  ipv6_ra_enable     = "true"
+  ipv6_pd_prefixid    = "999"
+  ipv6_ra_enable      = "true"
 }
