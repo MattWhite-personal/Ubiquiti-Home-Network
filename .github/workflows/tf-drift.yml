@@ -23,6 +23,7 @@ env:
   TF_VAR_repository: "${{ github.repository }}"
   UNIFI_API_URL: "${{ secrets.UNIFI_API_URL }}"
   UNIFI_INSECURE: "true"
+  TF_PLUGIN_CACHE_DIR: "/opt/tf-plugin-cache"
 
 jobs:
   terraform-plan:
