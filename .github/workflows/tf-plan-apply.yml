@@ -29,6 +29,7 @@ env:
   ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
   TF_VAR_repository: "${{ github.repository }}"
   UNIFI_INSECURE: "true"
+  TF_PLUGIN_CACHE_DIR: "/opt/tf-plugin-cache"
 
 jobs:
   terraform-plan:
