@@ -1,3 +1,3 @@
-output "test value" {
-    value = data.unifi_network.lan_network.id
+output "test-value" {
+  value = data.unifi_network.lan_network.id
 }
