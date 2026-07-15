@@ -10,8 +10,8 @@ terraform {
 
   required_providers {
     unifi = {
-      source  = "filipowm/unifi"
-      version = "~> 1.0"
+      source  = "ubiquiti-community/unifi"
+      version = "= 0.54.1"
     }
 
     azurerm = {

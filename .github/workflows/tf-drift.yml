@@ -47,6 +47,7 @@ jobs:
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           UNIFI_API_KEY: op://homelab-cicd/unifi-network-local-api/credential
+          UNIFI_API: op://homelab-cicd/unifi-network-local-api/hostname
           TF_VAR_ipv4_supernet: op://homelab-cicd/unifi-terraform-vars/ipv4_supernet
           TF_VAR_ipv6_supernet: op://homelab-cicd/unifi-terraform-vars/ipv6_supernet
           TF_VAR_pihole_ipv4: op://homelab-cicd/unifi-terraform-vars/pihole_ipv4
@@ -62,12 +63,12 @@ jobs:
       - name: Terraform Init
         run: terraform init
       # Login to Azure CLI to support temporary runner IP allow-list
-      - name: Setup Azure CLI
-        uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      #- name: Setup Azure CLI
+      #  uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
+      #  with:
+      #    client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #    tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #    subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       # Generates an execution plan for Terraform
       # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes.
