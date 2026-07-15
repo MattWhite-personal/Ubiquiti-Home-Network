@@ -47,6 +47,7 @@ jobs:
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           UNIFI_API_KEY: op://homelab-cicd/unifi-network-local-api/credential
+          UNIFI_API: op://homelab-cicd/unifi-network-local-api/hostname
           TF_VAR_ipv4_supernet: op://homelab-cicd/unifi-terraform-vars/ipv4_supernet
           TF_VAR_ipv6_supernet: op://homelab-cicd/unifi-terraform-vars/ipv6_supernet
           TF_VAR_pihole_ipv4: op://homelab-cicd/unifi-terraform-vars/pihole_ipv4
