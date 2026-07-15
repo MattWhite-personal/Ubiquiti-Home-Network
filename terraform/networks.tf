@@ -8,10 +8,10 @@ resource "unifi_network" "lan_network" {
     enabled = true
     servers = ["192.168.178.14"]
   }
-  dhcp_guarding = {
-    enabled = true
-    servers = ["192.168.178.14"]
-  }
+  #dhcp_guarding = {
+  #  enabled = true
+  #  servers = ["192.168.178.14"]
+  #}
   #ipv6_static_subnet             = "2a02:8011:ee07:999::/64"
   #ipv6_client_address_assignment = "slaac"
   #ipv6_ra                        = true
