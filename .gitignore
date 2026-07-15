@@ -1,0 +1,55 @@
+# ─────────────────────────────────────────────────────────────
+# Ubiquiti-Home-Network .gitignore
+# Terraform + secrets + editor noise
+# ─────────────────────────────────────────────────────────────
+
+# Terraform runtime — regenerated on `terraform init`
+.terraform/
+.terraform.lock.hcl.backup
+
+# State files — remote backend is authoritative; local copies are debug-only
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Plans — treated as ephemeral; never committed
+*.tfplan
+plan.out
+
+# Variables that carry secrets or per-environment overrides
+*.tfvars
+!*.tfvars.example
+!terraform.tfvars.example
+
+# Crash logs from Terraform panics
+crash.log
+crash.*.log
+
+# CLI configuration
+.terraformrc
+terraform.rc
+
+# ─── Secrets — belt-and-braces even though we shouldn't have them locally ─
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets/
+
+# ─── Editor / OS ────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── Local scratch ──────────────────────────────────────────
+scratch/
+tmp/
+*.local
