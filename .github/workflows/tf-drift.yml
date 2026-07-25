@@ -54,6 +54,7 @@ jobs:
           TF_VAR_pihole_ipv4: op://homelab-cicd/unifi-terraform-vars/pihole_ipv4
           TF_VAR_pihole_ipv6: op://homelab-cicd/unifi-terraform-vars/pihole_ipv6
           TF_VAR_kea_ipv4: op://homelab-cicd/unifi-terraform-vars/kea_ipv4
+          TF_VAR_wifi_guest_psk: op://homelab-cicd/wifi-psk-guest/password
 
       # Install the latest version of the Terraform CLI
       - name: Setup Terraform
