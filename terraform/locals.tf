@@ -8,22 +8,50 @@ locals {
       name      = "Management"
       purpose   = "corporate"
       dhcp_mode = "relay"
-      octet     = 254 # VLAN ID > 255, explicit octet
+      octet     = 254
     }
     iot = {
       vlan_id   = 30
       name      = "IoT"
       purpose   = "corporate"
       dhcp_mode = "relay"
-      octet     = 30 # matches VLAN ID; explicit for consistency
+      octet     = 30
     }
-    # guest = {
-    #   vlan_id   = 666
-    #   name      = "Guest"
-    #   purpose   = "guest"
-    #   dhcp_mode = "relay"
-    #   octet     = 166
-    # }
+    guest = {
+      vlan_id   = 666
+      name      = "Guest"
+      purpose   = "guest"
+      dhcp_mode = "relay"
+      octet     = 166
+    }
+    matt-work = {
+      vlan_id   = 21
+      name      = "Matt's Work"
+      purpose   = "corporate"
+      dhcp_mode = "relay"
+      octet     = 21
+    }
+    jen-work = {
+      vlan_id   = 22
+      name      = "Jen's Work"
+      purpose   = "corporate"
+      dhcp_mode = "relay"
+      octet     = 22
+    }
+    personal = {
+      vlan_id   = 40
+      name      = "Personal devices"
+      purpose   = "corporate"
+      dhcp_mode = "relay"
+      octet     = 40
+    }
+    server = {
+      vlan_id   = 10
+      name      = "Server"
+      purpose   = "corporate"
+      dhcp_mode = "relay"
+      octet     = 50
+    }
   }
 
   # ── COMPUTED FACTS — do not edit; derived from definitions ──
