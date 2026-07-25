@@ -26,6 +26,8 @@ env:
   ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
   UNIFI_INSECURE: "true"
   TF_PLUGIN_CACHE_DIR: "/opt/tf-plugin-cache"
+  TF_LOG: "DEBUG"
+  TF_LOG_PATH: "import-debug.log"
 
 jobs:
   import:
@@ -84,6 +86,14 @@ jobs:
       - name: Terraform Import
         if: steps.check.outputs.already_imported == 'false'
         run: terraform import "${{ inputs.resource_address }}" "${{ inputs.resource_id }}"
+      
+      - name: Upload debug log
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: import-debug-log
+          path: terraform/import-debug.log
+          if-no-files-found: ignore
 
       - name: Plan after import (drift check)
         run: |
