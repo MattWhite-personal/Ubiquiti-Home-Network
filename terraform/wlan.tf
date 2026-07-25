@@ -12,7 +12,7 @@
 #  wpa3_support    = each.value.wpa3 != "off"
 #  wpa3_transition = each.value.wpa3 == "transition"
 
-  # bands / ap_group / pmf — tune to the provider's actual attribute names
+# bands / ap_group / pmf — tune to the provider's actual attribute names
 #}
 
 # ── Enterprise / 802.1X WLANs (4c — empty until then) ──
