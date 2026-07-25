@@ -33,13 +33,13 @@ resource "unifi_network" "vlan" {
     servers = [var.kea_ipv4]
   } : null
 
-  dhcp_enabled = each.value.dhcp_mode == "server"
+  # dhcp_enabled = each.value.dhcp_mode == "server"
 
   # IPv6 — SLAAC via RA from the WAN-delegated /48
   ipv6_interface_type            = "static"
   ipv6_static_subnet             = each.value.ipv6_gateway
   ipv6_client_address_assignment = "slaac"
-  ipv6_ra_enable                 = true
+  ipv6_ra                        = true
 }
 
 moved {
