@@ -1,0 +1,94 @@
+name: "Terraform Import (manual, reusable)"
+
+on:
+  workflow_dispatch:
+    inputs:
+      resource_address:
+        description: "Terraform resource address, e.g. unifi_firewall_zone.hotspot"
+        required: true
+        type: string
+      resource_id:
+        description: "The provider/API ID of the existing object to import"
+        required: true
+        type: string
+
+defaults:
+  run:
+    working-directory: ./terraform
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+  ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+  ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
+  UNIFI_INSECURE: "true"
+  TF_PLUGIN_CACHE_DIR: "/opt/tf-plugin-cache"
+
+jobs:
+  import:
+    name: "Import ${{ inputs.resource_address }}"
+    runs-on: [self-hosted, homelab, ubiquiti]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Load secrets from 1Password
+        uses: 1password/load-secrets-action@3a12b0ab99d9cd590a3e9b5a90ea017210ed9556 # v4
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          UNIFI_API_KEY: op://homelab-cicd/unifi-network-local-api/credential
+          UNIFI_API: op://homelab-cicd/unifi-network-local-api/hostname
+          TF_VAR_ipv4_supernet: op://homelab-cicd/unifi-terraform-vars/ipv4_supernet
+          TF_VAR_ipv6_supernet: op://homelab-cicd/unifi-terraform-vars/ipv6_supernet
+          TF_VAR_pihole_ipv4: op://homelab-cicd/unifi-terraform-vars/pihole_ipv4
+          TF_VAR_pihole_ipv6: op://homelab-cicd/unifi-terraform-vars/pihole_ipv6
+          TF_VAR_kea_ipv4: op://homelab-cicd/unifi-terraform-vars/kea_ipv4
+          TF_VAR_wifi_guest_psk: op://homelab-cicd/wifi-psk-guest/password
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_wrapper: false
+
+      - name: Setup Azure CLI (OIDC)
+        uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Show target before import
+        run: |
+          echo "Importing:"
+          echo "  Address: ${{ inputs.resource_address }}"
+          echo "  ID:      ${{ inputs.resource_id }}"
+
+      - name: Check if already in state
+        id: check
+        run: |
+          if terraform state list | grep -Fxq "${{ inputs.resource_address }}"; then
+            echo "already_imported=true" >> "$GITHUB_OUTPUT"
+            echo "::warning::${{ inputs.resource_address }} is already in state — skipping import to stay idempotent."
+          else
+            echo "already_imported=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Terraform Import
+        if: steps.check.outputs.already_imported == 'false'
+        run: terraform import "${{ inputs.resource_address }}" "${{ inputs.resource_id }}"
+
+      - name: Plan after import (drift check)
+        run: |
+          echo "Running plan to show any drift between imported object and your HCL:"
+          terraform plan -no-color -detailed-exitcode || true
+
+      - name: State entry confirmation
+        run: terraform state show "${{ inputs.resource_address }}" || true
