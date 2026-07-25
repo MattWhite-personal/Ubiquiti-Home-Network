@@ -1,4 +1,11 @@
-# ── PSK WLANs (Guest now; IoT at 4b) ──
+#resource "unifi_ap_group" "all-aps" {
+#  name = "all-aps"
+#
+#  device_macs = [
+#    "58:d6:1f:84:35:0b",
+#  ]
+#}
+
 resource "unifi_wlan" "psk" {
   for_each = { for k, v in local.wlans : k => v if v.auth == "psk" }
 
