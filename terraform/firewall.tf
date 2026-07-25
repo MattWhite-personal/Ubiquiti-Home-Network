@@ -3,5 +3,5 @@
 #}
 
 resource "unifi_firewall_zone" "mjw-test" {
-    name = "MJW Test"
+  name = "MJW Test"
 }
