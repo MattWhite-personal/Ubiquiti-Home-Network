@@ -37,7 +37,7 @@ locals {
     personal     = { network_slug = "personal", cred_var = "radius_personal" }
   }
   wifi_secrets = {
-    wifi_guest_psk  = var.wifi_guest_psk
+    wifi_guest_psk = var.wifi_guest_psk
     #wifi_iot_psk    = var.wifi_iot_psk
     #radius_matt     = var.radius_matt
     #radius_jen      = var.radius_jen
