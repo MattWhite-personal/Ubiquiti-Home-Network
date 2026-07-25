@@ -51,6 +51,12 @@ variable "networks" {
       purpose   = "corporate"
       dhcp_mode = "relay"
     }
+    iot = {
+      vlan_id   = 30
+      name      = "IoT"
+      purpose   = "corporate"
+      dhcp_mode = "relay"
+    }
   }
 }
 
