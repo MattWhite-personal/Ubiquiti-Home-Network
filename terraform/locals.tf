@@ -50,7 +50,7 @@ locals {
       name      = "Server"
       purpose   = "corporate"
       dhcp_mode = "relay"
-      octet     = 50
+      octet     = 10
     }
   }
 
