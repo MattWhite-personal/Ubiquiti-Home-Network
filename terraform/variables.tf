@@ -30,6 +30,30 @@ variable "pihole_ipv6" {
   sensitive   = true
 }
 
+variable "kea_ipv4" {
+  description = "IPv4 of the Kea DHCP server that VLANs relay to."
+  type        = string
+  sensitive   = true
+}
+
+variable "networks" {
+  description = "Map of managed VLANs. Key = resource address; vlan_id drives all addressing."
+  type = map(object({
+    vlan_id   = number
+    name      = string
+    purpose   = string # "corporate" | "guest"
+    dhcp_mode = string # "relay" (to Kea) | "server" (UDR7 built-in) | "none"
+  }))
+  default = {
+    mgmt = {
+      vlan_id   = 999
+      name      = "Management"
+      purpose   = "corporate"
+      dhcp_mode = "relay"
+    }
+  }
+}
+
 variable "common_tags" {
   description = "Tags applied to all UniFi objects that support tagging. UniFi's tag support is limited but growing."
   type        = map(string)
