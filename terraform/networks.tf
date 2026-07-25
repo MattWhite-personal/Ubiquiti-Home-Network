@@ -27,3 +27,7 @@ moved {
   from = unifi_network.vlan["mgmt"]
   to   = unifi_network.network["mgmt"]
 }
+moved {
+  from = unifi_network.vlan["iot"]
+  to   = unifi_network.network["iot"]
+}
