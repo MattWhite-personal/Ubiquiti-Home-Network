@@ -1,5 +1,6 @@
 resource "unifi_firewall_zone" "hotspot" {
-  name = "Hotspot"
+  name         = "Hotspot"
+  default_zone = true
 }
 
 resource "unifi_firewall_zone" "mjw-test" {
