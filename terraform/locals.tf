@@ -1,35 +1,41 @@
 locals {
-
-  vlan_octet_overrides = {
-    666 = 166 # Guest
-    999 = 254 # Management
+  # ── DECLARATIVE SURFACE — edit this to add/change networks ──
+  # Keyed by a stable slug. The slug never changes even if you
+  # rename the network or renumber the VLAN — downstream refs stay valid.
+  networks = {
+    mgmt = {
+      vlan_id   = 999
+      name      = "Management"
+      purpose   = "corporate"
+      dhcp_mode = "relay"
+      octet     = 254 # VLAN ID > 255, explicit octet
+    }
+    iot = {
+      vlan_id   = 30
+      name      = "IoT"
+      purpose   = "corporate"
+      dhcp_mode = "relay"
+      octet     = 30 # matches VLAN ID; explicit for consistency
+    }
+    # guest = {
+    #   vlan_id   = 666
+    #   name      = "Guest"
+    #   purpose   = "guest"
+    #   dhcp_mode = "relay"
+    #   octet     = 166
+    # }
   }
 
-  networks_computed = {
-    for k, cfg in var.networks : k => merge(cfg, {
-      # IPv4 subnet — octet from override table or the VLAN ID itself
-      ipv4_subnet = cidrsubnet(
-        var.ipv4_supernet,
-        8,
-        lookup(local.vlan_octet_overrides, cfg.vlan_id, cfg.vlan_id)
-      )
-      ipv4_gateway = "${cidrhost(
-        cidrsubnet(var.ipv4_supernet, 8, lookup(local.vlan_octet_overrides, cfg.vlan_id, cfg.vlan_id)),
-        1
-      )}/24"
-
-      ipv6_subnet = cidrsubnet(
-        var.ipv6_supernet,
-        16,
-        parseint(tostring(cfg.vlan_id), 16)
-      )
-      ipv6_gateway = format(
-        "%s/64",
-        cidrhost(
-          cidrsubnet(var.ipv6_supernet, 16, parseint(tostring(cfg.vlan_id), 16)),
-          1
-        )
-      )
-    })
+  # ── COMPUTED FACTS — do not edit; derived from definitions ──
+  # Referenced by wifi.tf, firewall.tf, ports.tf via local.network_facts[<slug>]
+  network_facts = {
+    for slug, net in local.networks : slug => {
+      vlan_id      = net.vlan_id
+      name         = net.name
+      ipv4_subnet  = cidrsubnet(var.ipv4_supernet, 8, net.octet)                            # routable prefix e.g. 10.140.254.0/24
+      ipv4_gateway = "${cidrhost(cidrsubnet(var.ipv4_supernet, 8, net.octet), 1)}/24"       # gateway CIDR e.g. 10.140.254.1/24
+      ipv6_subnet  = cidrsubnet(var.ipv6_supernet, 16, parseint(tostring(net.vlan_id), 16)) # routable prefix e.g. 2a02:8011:ee07:999::/64
+      ipv6_gateway = "${cidrhost(cidrsubnet(var.ipv6_supernet, 16, parseint(tostring(net.vlan_id), 16)), 1)}/64"
+    }
   }
 }
