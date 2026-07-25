@@ -7,7 +7,8 @@ resource "unifi_wlan" "psk" {
   security      = "wpapsk"
   passphrase    = local.wifi_secrets[each.value.psk_var]
   network_id    = unifi_network.network[each.value.network_slug].id
-  user_group_id = data.unifi_user_group.default.id
+  ap_group_ids  = [data.unifi_ap_group.default.id]
+  user_group_id = data.unifi_client_qos_rate.default.id
 
   wpa3_support    = each.value.wpa3 != "off"
   wpa3_transition = each.value.wpa3 == "transition"
