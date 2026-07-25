@@ -93,7 +93,7 @@ jobs:
         with:
           name: import-debug-log
           path: terraform/import-debug.log
-          if-no-found: ignore
+          if-no-files-found: ignore
 
       - name: Plan after import (drift check)
         run: |
