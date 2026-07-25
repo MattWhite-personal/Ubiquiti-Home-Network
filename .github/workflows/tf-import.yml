@@ -26,6 +26,8 @@ env:
   ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
   UNIFI_INSECURE: "true"
   TF_PLUGIN_CACHE_DIR: "/opt/tf-plugin-cache"
+  TF_LOG: "DEBUG"
+  TF_LOG_PATH: "import-debug.log"
 
 jobs:
   import:
