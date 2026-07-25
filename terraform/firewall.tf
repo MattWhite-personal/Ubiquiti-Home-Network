@@ -1,5 +1,5 @@
 resource "unifi_firewall_zone" "hotspot" {
-  name         = "Hotspot"
+  name = "Hotspot"
   #default_zone = true
   network_ids = [
     unifi_network.network["guest"].id
