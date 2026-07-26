@@ -9,6 +9,7 @@ locals {
       purpose   = "corporate"
       dhcp_mode = "relay"
       octet     = 254
+      zone      = "management"
     }
     iot = {
       vlan_id   = 30
@@ -16,6 +17,7 @@ locals {
       purpose   = "corporate"
       dhcp_mode = "relay"
       octet     = 30
+      zone      = "infrastructure"
     }
     guest = {
       vlan_id   = 666
@@ -23,6 +25,7 @@ locals {
       purpose   = "corporate"
       dhcp_mode = "relay"
       octet     = 166
+      zone      = "guest"
     }
     matt-work = {
       vlan_id   = 21
@@ -30,6 +33,7 @@ locals {
       purpose   = "corporate"
       dhcp_mode = "relay"
       octet     = 21
+      zone      = "work"
     }
     jen-work = {
       vlan_id   = 22
@@ -37,6 +41,7 @@ locals {
       purpose   = "corporate"
       dhcp_mode = "relay"
       octet     = 22
+      zone      = "work"
     }
     personal = {
       vlan_id   = 40
@@ -44,6 +49,7 @@ locals {
       purpose   = "corporate"
       dhcp_mode = "relay"
       octet     = 40
+      zone      = "personal"
     }
     server = {
       vlan_id   = 10
@@ -51,6 +57,7 @@ locals {
       purpose   = "corporate"
       dhcp_mode = "relay"
       octet     = 10
+      zone      = "infrastructure"
     }
   }
   zone_names = distinct([for net in local.networks : net.zone])
