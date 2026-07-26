@@ -20,7 +20,7 @@ locals {
     guest = {
       vlan_id   = 666
       name      = "Guest"
-      purpose   = "guest"
+      purpose   = "corporate"
       dhcp_mode = "relay"
       octet     = 166
     }
@@ -52,6 +52,12 @@ locals {
       dhcp_mode = "relay"
       octet     = 10
     }
+  }
+  zone_names = distinct([for net in local.networks : net.zone])
+  zone_membership = {
+    for zone in local.zone_names : zone => [
+      for slug, net in local.networks : slug if net.zone == zone
+    ]
   }
 
   # ── COMPUTED FACTS — do not edit; derived from definitions ──

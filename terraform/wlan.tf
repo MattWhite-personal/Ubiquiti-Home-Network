@@ -8,6 +8,7 @@
 #  network_id    = unifi_network.network[each.value.network_slug].id
 #  ap_group_ids  = [data.unifi_ap_group.default.id]
 #  user_group_id = data.unifi_client_qos_rate.default.id
+#  l2_isolation  = each.value.is_guest
 
 #  wpa3_support    = each.value.wpa3 != "off"
 #  wpa3_transition = each.value.wpa3 == "transition"
