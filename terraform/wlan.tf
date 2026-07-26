@@ -12,6 +12,9 @@ resource "unifi_wlan" "psk" {
 
   wpa3_support    = each.value.wpa3 != "off"
   wpa3_transition = each.value.wpa3 == "transition"
+  pmf_mode = each.value.wpa3 == "transition" ? "optional" : (
+    each.value.wpa3 == "only" ? "required" : "disabled"
+  )
 
   # bands / ap_group / pmf — tune to the provider's actual attribute names
 }
@@ -29,4 +32,7 @@ resource "unifi_wlan" "psk" {
 #
 #  wpa3_support    = each.value.wpa3 != "off"
 #  wpa3_transition = each.value.wpa3 == "transition"
+#    pmf_mode = each.value.wpa3 == "transition" ? "optional" : (
+#    each.value.wpa3 == "only" ? "required" : "disabled"
+#  )
 #}
