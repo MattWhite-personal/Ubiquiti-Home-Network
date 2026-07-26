@@ -2,7 +2,7 @@ resource "unifi_network" "network" {
   for_each = local.networks
 
   name       = each.value.name
-  purpose    = each.value.purpose
+  purpose    = "corporate" #all networks corporate - guest handled in WLAN config
   vlan       = each.value.vlan_id
   auto_scale = false
 
