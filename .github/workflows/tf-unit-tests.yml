@@ -14,6 +14,9 @@ defaults:
   run:
     working-directory: ./terraform
 
+env:
+  TF_PLUGIN_CACHE_DIR: "/opt/tf-plugin-cache"
+  
 permissions:
   security-events: write # Needed to upload-sarif
   contents: write # Needed to clone repo
