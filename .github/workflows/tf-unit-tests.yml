@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   terraform-unit-tests-push:
-    if: github.event_name == 'push'
+    #if: github.event_name == 'push'
     name: "Terraform Unit Tests (Push)"
     runs-on: [self-hosted, homelab, ubiquiti]
 
