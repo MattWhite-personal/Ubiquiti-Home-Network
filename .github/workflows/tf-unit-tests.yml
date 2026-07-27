@@ -1,6 +1,7 @@
 name: "Terraform Unit Tests"
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - "terraform/**"
