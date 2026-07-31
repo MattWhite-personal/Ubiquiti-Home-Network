@@ -29,6 +29,8 @@ resource "unifi_wlan" "enterprise" {
   is_guest          = each.value.is_guest
   security          = "wpaeap"
   radius_profile_id = data.unifi_radius_profile.udr7.id
+  ap_group_ids      = [data.unifi_ap_group.default.id]
+  user_group_id     = data.unifi_client_qos_rate.default.id
 
   wpa3_support    = each.value.wpa3 != "off"
   wpa3_transition = each.value.wpa3 == "transition"
