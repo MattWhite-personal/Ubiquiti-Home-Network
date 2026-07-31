@@ -1,8 +1,10 @@
 resource "unifi_radius_user" "user" {
   for_each = local.radius_accounts
 
-  name     = each.key
-  password = local.wifi_secrets[each.value.cred_var]
-
-  # 4b deliberately omits vlan / network_id / tunnel_* — that is 4c.
+  name               = each.key
+  password           = local.wifi_secrets[each.value.cred_var]
+  vlan               = unifi_network.network[each.value.network_slug].vlan_id
+  tunnel_config_type = "802.1x"
+  tunnel_type        = 13 # VLAN
+  tunnel_medium_type = 6  # IEEE-802
 }
