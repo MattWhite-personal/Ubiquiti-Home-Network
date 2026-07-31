@@ -7,7 +7,7 @@ on:
 
 jobs:
   state-rm:
-    runs-on: self-hosted
+    runs-on: [self-hosted, homelab, ubiquiti]
     steps:
       - uses: actions/checkout@v4
       - run: terraform init
