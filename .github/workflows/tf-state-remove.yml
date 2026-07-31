@@ -1,19 +1,136 @@
+name: "Terraform State Remove (manual, reusable)"
+
 on:
   workflow_dispatch:
     inputs:
-      address:
-        description: "Resource address to remove from state"
+      resource_address:
+        description: 'Resource address, e.g. unifi_wlan.enterprise["whitefam"]'
         required: true
+        type: string
+      dry_run:
+        description: "Preview only — show what would be removed, change nothing"
+        required: true
+        type: boolean
+        default: true
+
+defaults:
+  run:
+    working-directory: ./terraform
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: terraform-state
+  cancel-in-progress: false
+
+env:
+  ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+  ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+  ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
+  UNIFI_INSECURE: "true"
+  TF_PLUGIN_CACHE_DIR: "/opt/tf-plugin-cache"
+  TF_LOG: "DEBUG"
+  TF_LOG_PATH: "state-rm-debug.log"
 
 jobs:
-  state-rm:
+  state_rm:
+    name: "State remove ${{ inputs.resource_address }}"
     runs-on: [self-hosted, homelab, ubiquiti]
     steps:
-      - uses: actions/checkout@v4
-      - run: terraform init
-      - run: terraform state pull > state-backup.json
-      - uses: actions/upload-artifact@v4
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Load secrets from 1Password
+        uses: 1password/load-secrets-action@3a12b0ab99d9cd590a3e9b5a90ea017210ed9556 # v4
         with:
-          name: state-backup
-          path: state-backup.json
-      - run: terraform state rm "${{ inputs.address }}"
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          UNIFI_API_KEY: op://homelab-cicd/unifi-network-local-api/credential
+          UNIFI_API: op://homelab-cicd/unifi-network-local-api/hostname
+          TF_VAR_ipv4_supernet: op://homelab-cicd/unifi-terraform-vars/ipv4_supernet
+          TF_VAR_ipv6_supernet: op://homelab-cicd/unifi-terraform-vars/ipv6_supernet
+          TF_VAR_pihole_ipv4: op://homelab-cicd/unifi-terraform-vars/pihole_ipv4
+          TF_VAR_pihole_ipv6: op://homelab-cicd/unifi-terraform-vars/pihole_ipv6
+          TF_VAR_kea_ipv4: op://homelab-cicd/unifi-terraform-vars/kea_ipv4
+          TF_VAR_wifi_guest_psk: op://homelab-cicd/wifi-psk-guest/password
+          TF_VAR_wifi_iot_psk: op://homelab-cicd/wifi-psk-iot/password
+          TF_VAR_radius_matt: op://homelab-cicd/radius-matt/password
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Show target
+        env:
+          RESOURCE_ADDRESS: ${{ inputs.resource_address }}
+        run: |
+          echo "Address: $RESOURCE_ADDRESS"
+          echo "Dry run: ${{ inputs.dry_run }}"
+
+      - name: Check present in state
+        id: check
+        env:
+          RESOURCE_ADDRESS: ${{ inputs.resource_address }}
+        run: |
+          if terraform state list | grep -Fxq "$RESOURCE_ADDRESS"; then
+            echo "in_state=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "in_state=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::$RESOURCE_ADDRESS is not in state — nothing to remove."
+          fi
+
+      - name: Back up state
+        if: steps.check.outputs.in_state == 'true'
+        run: terraform state pull > "state-backup-${{ github.run_id }}.json"
+
+      - name: Upload state backup
+        if: steps.check.outputs.in_state == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: state-backup-${{ github.run_id }}
+          path: terraform/state-backup-${{ github.run_id }}.json
+          retention-days: 30
+
+      - name: State remove (dry run)
+        if: steps.check.outputs.in_state == 'true' && inputs.dry_run
+        env:
+          RESOURCE_ADDRESS: ${{ inputs.resource_address }}
+        run: |
+          terraform state rm -dry-run "$RESOURCE_ADDRESS"
+          echo "::notice::Dry run only — state unchanged. Re-run with dry_run=false to apply."
+
+      - name: State remove
+        if: steps.check.outputs.in_state == 'true' && !inputs.dry_run
+        env:
+          RESOURCE_ADDRESS: ${{ inputs.resource_address }}
+        run: terraform state rm "$RESOURCE_ADDRESS"
+
+      - name: Confirm removal
+        if: steps.check.outputs.in_state == 'true' && !inputs.dry_run
+        env:
+          RESOURCE_ADDRESS: ${{ inputs.resource_address }}
+        run: |
+          if terraform state list | grep -Fxq "$RESOURCE_ADDRESS"; then
+            echo "::error::$RESOURCE_ADDRESS is still in state."
+            exit 1
+          fi
+          echo "Removed from state."
+
+      - name: Upload debug log
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: state-rm-debug-log
+          path: terraform/state-rm-debug.log
+          if-no-files-found: ignore
+
+      - name: Plan after removal (drift check)
+        if: '!inputs.dry_run'
+        run: terraform plan -no-color -detailed-exitcode || true
