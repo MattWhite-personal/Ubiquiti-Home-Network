@@ -9,6 +9,6 @@ data "unifi_client_qos_rate" "default" {
   name = "Default"
 }
 
-data "unifi_radius_prfile" "udr7" {
+data "unifi_radius_profile" "udr7" {
   name = "Default"
 }
