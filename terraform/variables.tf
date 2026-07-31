@@ -64,12 +64,10 @@ variable "wifi_guest_psk" {
   type      = string
   sensitive = true
 }
-
-# Added at 4b:
-# variable "wifi_iot_psk" {
-#   type      = string
-#   sensitive = true
-# }
+variable "wifi_iot_psk" {
+  type      = string
+  sensitive = true
+}
 
 variable "common_tags" {
   description = "Tags applied to all UniFi objects that support tagging. UniFi's tag support is limited but growing."
