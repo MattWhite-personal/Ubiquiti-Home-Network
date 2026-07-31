@@ -4,7 +4,7 @@ resource "unifi_wlan" "psk" {
   name          = each.value.name
   is_guest      = each.value.is_guest
   security      = "wpapsk"
-  passphrase    = local.wifi_secrets[each.value.psk_var]
+  passphrase    = each.value.psk
   network_id    = unifi_network.network[each.value.network_slug].id
   ap_group_ids  = [data.unifi_ap_group.default.id]
   user_group_id = data.unifi_client_qos_rate.default.id
