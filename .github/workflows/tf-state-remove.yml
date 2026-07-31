@@ -1,0 +1,19 @@
+on:
+  workflow_dispatch:
+    inputs:
+      address:
+        description: "Resource address to remove from state"
+        required: true
+
+jobs:
+  state-rm:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - run: terraform init
+      - run: terraform state pull > state-backup.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: state-backup
+          path: state-backup.json
+      - run: terraform state rm "${{ inputs.address }}"
