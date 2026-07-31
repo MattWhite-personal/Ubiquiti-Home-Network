@@ -62,6 +62,9 @@ jobs:
           TF_VAR_kea_ipv4: op://homelab-cicd/unifi-terraform-vars/kea_ipv4
           TF_VAR_wifi_guest_psk: op://homelab-cicd/wifi-psk-guest/password
           TF_VAR_wifi_iot_psk: op://homelab-cicd/wifi-psk-IoT/password
+          TF_VAR_radius_matt: op://homelab-cicd/radius-mwwork/password
+          TF_VAR_radius_jen: op://homelab-cicd/radius-jwswork/password
+          TF_VAR_radius_personal: op://homelab-cicd/radius-personal/password
 
       # Install the latest version of the Terraform CLI
       - name: Setup Terraform

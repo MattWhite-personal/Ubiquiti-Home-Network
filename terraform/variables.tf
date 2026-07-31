@@ -68,6 +68,18 @@ variable "wifi_iot_psk" {
   type      = string
   sensitive = true
 }
+variable "radius_matt" {
+  type      = string
+  sensitive = true
+}
+variable "radius_jen" {
+  type      = string
+  sensitive = true
+}
+variable "radius_personal" {
+  type      = string
+  sensitive = true
+}
 
 variable "common_tags" {
   description = "Tags applied to all UniFi objects that support tagging. UniFi's tag support is limited but growing."
