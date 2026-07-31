@@ -31,7 +31,7 @@ resource "unifi_wlan" "enterprise" {
   radius_profile_id = data.unifi_radius_profile.udr7.id
   ap_group_ids      = [data.unifi_ap_group.default.id]
   user_group_id     = data.unifi_client_qos_rate.default.id
-  wlan_bands        = ["5g", "6g"]
+  wlan_band         = "5g"
   network_id        = data.unifi_network.lan_network.id
 
   wpa3_support    = each.value.wpa3 != "off"
