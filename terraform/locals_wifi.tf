@@ -10,15 +10,15 @@ locals {
       bands        = ["2g", "5g", "6g"]
       is_guest     = true
     }
-    #whitefam_iot = {
-    #  name         = "WhiteFam-IoT"
-    #  auth         = "psk"
-    #  network_slug = "iot"
-    #  psk_var      = "wifi_iot_psk"
-    #  wpa3         = "transition"
-    #  bands        = ["2g", "5g"]
-    #  is_guest     = false
-    #}
+    whitefam_iot = {
+      name         = "WhiteFam-IoT"
+      auth         = "psk"
+      network_slug = "iot"
+      psk_var      = "wifi_iot_psk"
+      wpa3         = "transition"
+      bands        = ["2g", "5g"]
+      is_guest     = false
+    }
     #whitefam = {
     #  name           = "WhiteFam"
     #  auth           = "enterprise" # 802.1X — VLAN comes from RADIUS, not here
@@ -38,7 +38,7 @@ locals {
   }
   wifi_secrets = {
     wifi_guest_psk = var.wifi_guest_psk
-    #wifi_iot_psk    = var.wifi_iot_psk
+    wifi_iot_psk   = var.wifi_iot_psk
     #radius_matt     = var.radius_matt
     #radius_jen      = var.radius_jen
     #radius_personal = var.radius_personal
