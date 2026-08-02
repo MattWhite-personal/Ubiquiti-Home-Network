@@ -68,15 +68,19 @@ variable "wifi_iot_psk" {
   type      = string
   sensitive = true
 }
-variable "radius_matt" {
+variable "radius_matt_work" {
   type      = string
   sensitive = true
 }
-variable "radius_jen" {
+variable "radius_jen_work" {
   type      = string
   sensitive = true
 }
-variable "radius_personal" {
+variable "radius_matt_personal" {
+  type      = string
+  sensitive = true
+}
+variable "radius_jen_personal" {
   type      = string
   sensitive = true
 }

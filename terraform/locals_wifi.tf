@@ -32,17 +32,21 @@ locals {
 
   # ── RADIUS accounts — identity → VLAN (4c) ──
   radius_accounts = {
-    matt_devices = {
+    matt_work = {
       network_slug  = "matt-work"
-      radius_secret = var.radius_matt
+      radius_secret = var.radius_matt_work
     }
-    jen_devices = {
+    jen_work = {
       network_slug  = "jen-work"
-      radius_secret = var.radius_jen
+      radius_secret = var.radius_jen_work
     }
-    personal = {
+    matt_personal = {
       network_slug  = "personal"
-      radius_secret = var.radius_personal
+      radius_secret = var.radius_matt_personal
+    }
+    jen_personal = {
+      network_slug  = "personal"
+      radius_secret = var.radius_jen_personal
     }
   }
 }
