@@ -9,7 +9,7 @@ locals {
       name = "wf-cam-sw01",
       mac  = "90:41:b2:e4:c2:5b",
       ports = {
-        # 1 = "trunk_wifi"
+        1 = "trunk_wifi"
         2 = "access_matt_work"
         # 3 = "shutdown"
         # 4 = "shutdown"
