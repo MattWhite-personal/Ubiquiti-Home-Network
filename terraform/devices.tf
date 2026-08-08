@@ -8,7 +8,11 @@ resource "unifi_device" "device" {
   for_each = local.devices
   mac      = each.value.mac
   name     = each.value.name
-  # NO port_override yet — PR2 is import-only.
-  # Because port_override is a MERGE, omitting it leaves all existing
-  # controller-side port config untouched. Safe.
+  dynamic "port_override" {
+    for_each = each.value.ports
+    content {
+      index           = port_override.key
+      port_profile_id = unifi_port_profile.port_profile[port_override.value].id
+    }
+  }
 }
