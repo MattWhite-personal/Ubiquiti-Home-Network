@@ -79,4 +79,47 @@ locals {
       ipv6_gateway = "${cidrhost(cidrsubnet(var.ipv6_supernet, 16, parseint(tostring(net.vlan_id), 16)), 1)}/64"
     }
   }
+  network_id = merge(
+    { for slug, net in local.networks : slug => unifi_network.network[slug].id },
+    { default = data.unifi_network.lan_network.id }
+  )
+
+  port_profiles = {
+    trunk_wifi = {
+      state          = "enabled"
+      native_network = "mgmt"
+      tagged_network = ["guest", "iot", "matt-work", "jen-work", "personal"]
+      poe_mode       = "auto"
+    }
+    trunk_wired = {
+      state          = "enabled"
+      native_network = "mgmt"
+      tagged_network = ["guest", "iot", "matt-work", "jen-work", "personal"]
+      poe_mode       = "auto"
+    }
+    trunk_nuc = {
+      state          = "enabled"
+      native_network = "default"
+      tagged_network = ["server", "iot"]
+      poe_mode       = "auto"
+    }
+    access_iot = {
+      state          = "enabled"
+      native_network = "iot"
+      tagged_network = []
+      poe_mode       = "auto"
+    }
+    access_matt_work = {
+      state          = "enabled"
+      native_network = "matt-work"
+      tagged_network = []
+      poe_mode       = "auto"
+    }
+    disabled = {
+      state          = "disabled"
+      native_network = "default"
+      tagged_network = []
+      poe_mode       = "off"
+    }
+  }
 }

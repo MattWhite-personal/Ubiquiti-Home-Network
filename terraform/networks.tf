@@ -22,6 +22,18 @@ resource "unifi_network" "network" {
   } : null
 }
 
+resource "unifi_port_profile" "port_profile" {
+  for_each = local.port_profiles
+
+  name                  = each.key
+  forward               = each.value.state == "disabled" ? "disabled" : "customize"
+  native_networkconf_id = local.network_id[each.value.native_network]
+  tagged_networkconf_ids = [
+    for slug in each.value.tagged_network : local.network_id[slug]
+  ]
+  poe_mode = each.value.poe_mode # now honours your locals (remember: "off", not "none")
+}
+
 # Rename from the previous refactor's address to the flat slug-keyed address
 moved {
   from = unifi_network.vlan["mgmt"]
