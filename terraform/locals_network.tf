@@ -10,7 +10,7 @@ locals {
     sw01 = {
       name         = "wf-cam-sw01",
       mac          = "90:41:b2:e4:c2:5b",
-      mgmt_network = null,
+      mgmt_network = "mgmt",
       mgmt_ip      = null,
       ports = {
         1 = "trunk_wifi"
