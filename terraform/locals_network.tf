@@ -1,4 +1,15 @@
 locals {
+  devices = {
+    udr7 = {
+      name = "wf-cam-fw01",
+      mac  = "a8:9c:6c:10:4b:de"
+    }
+    flex = {
+      name = "wf-cam-sw01",
+      mac  = "90:41:b2:e4:c2:5b"
+    }
+  }
+
   # ── DECLARATIVE SURFACE — edit this to add/change networks ──
   # Keyed by a stable slug. The slug never changes even if you
   # rename the network or renumber the VLAN — downstream refs stay valid.
