@@ -112,14 +112,14 @@ locals {
   port_profiles = {
     trunk_wifi = {
       state          = "enabled"
-      native_network = "mgmt"
-      tagged_network = ["guest", "iot", "matt-work", "jen-work", "personal"]
+      native_network = "default"
+      tagged_network = ["guest", "iot", "matt-work", "jen-work", "personal", "mgmt"]
       poe_mode       = "auto"
     }
     trunk_wired = {
       state          = "enabled"
-      native_network = "mgmt"
-      tagged_network = ["guest", "iot", "matt-work", "jen-work", "personal"]
+      native_network = "default"
+      tagged_network = ["guest", "iot", "matt-work", "jen-work", "personal", "mgmt"]
       poe_mode       = "auto"
     }
     trunk_nuc = {
