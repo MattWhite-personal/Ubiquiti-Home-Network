@@ -37,11 +37,11 @@ locals {
       radius_secret = var.radius_matt_work
     }
     jen_work = {
-      network_slug  = "jen-work"
+      network_slug  = null
       radius_secret = var.radius_jen_work
     }
     matt_personal = {
-      network_slug  = "personal"
+      network_slug  = null
       radius_secret = var.radius_matt_personal
     }
     jen_personal = {
