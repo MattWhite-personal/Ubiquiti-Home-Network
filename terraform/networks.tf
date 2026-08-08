@@ -25,11 +25,19 @@ resource "unifi_network" "network" {
 resource "unifi_port_profile" "port_profile" {
   for_each = local.port_profiles
 
-  name                  = each.key
-  forward               = each.value.state == "disabled" ? "disabled" : "customize"
+  name = each.key
+  forward = (
+    each.value.state == "disabled" ? "disabled" :
+    length(each.value.tagged_network) == 0 ? "native" : "customize"
+  )
   native_networkconf_id = local.network_id[each.value.native_network]
   tagged_networkconf_ids = [
     for slug in each.value.tagged_network : local.network_id[slug]
+  ]
+  excluded_networkconf_ids = [
+    for slug in local.all_taggable_slugs :
+    local.network_id[slug]
+    if !contains(each.value.tagged_network, slug)
   ]
   tagged_vlan_mgmt = length(each.value.tagged_network) == 0 ? "block_all" : "custom"
   poe_mode         = each.value.poe_mode # now honours your locals (remember: "off", not "none")
