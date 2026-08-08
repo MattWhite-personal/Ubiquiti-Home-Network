@@ -3,3 +3,7 @@ output "network_facts" {
   value       = local.network_facts
   sensitive   = true # contains subnet/prefix data derived from sensitive supernets
 }
+
+output "disabled_profile_id" {
+  value = data.unifi_port_profile.disabled.id
+}

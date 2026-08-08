@@ -12,3 +12,7 @@ data "unifi_client_qos_rate" "default" {
 data "unifi_radius_profile" "udr7" {
   name = "Default"
 }
+
+data "unifi_port_profile" "disabled" {
+  name = "Disabled"
+}
