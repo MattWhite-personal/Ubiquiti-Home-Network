@@ -22,25 +22,46 @@ resource "unifi_network" "network" {
   } : null
 }
 
+###############################################################################
+# KNOWN-ISSUE: unifi_port_profile tagged_networkconf_ids not persisted
+# -----------------------------------------------------------------------------
+# The provider's inclusion field `tagged_networkconf_ids` is NOT wired to the
+# go-unifi backend, so `forward = "customize"` + a tagged include-list fails at
+# apply ("Provider produced inconsistent result after apply"): forward reverts
+# to "all" and the tagged set reads back null, leaving resources tainted and
+# unable to converge.
+#
+# WORKAROUND (used below): exclusion model instead of inclusion.
+#   - trunks -> tagged_vlan_mgmt = "custom" + excluded_networkconf_ids
+#   - access -> tagged_vlan_mgmt = "block_all" + forward = "native"
+#
+# Revert to the cleaner tagged_networkconf_ids include-list once fixed upstream.
+#
+# Our issue:    https://github.com/MattWhite-personal/Ubiquiti-Home-Network/issues/50
+# Upstream ref: https://github.com/ubiquiti-community/terraform-provider-unifi/issues/245
+# Provider:     ubiquiti-community/unifi v0.55.0
+#######################################################
 resource "unifi_port_profile" "port_profile" {
   for_each = local.port_profiles
 
   name = each.key
+
   forward = (
     each.value.state == "disabled" ? "disabled" :
     length(each.value.tagged_network) == 0 ? "native" : "customize"
   )
+
   native_networkconf_id = local.network_id[each.value.native_network]
-  tagged_networkconf_ids = [
-    for slug in each.value.tagged_network : local.network_id[slug]
-  ]
+
+  tagged_vlan_mgmt = length(each.value.tagged_network) == 0 ? "block_all" : "custom"
+
   excluded_networkconf_ids = [
     for slug in local.all_taggable_slugs :
     local.network_id[slug]
-    if !contains(each.value.tagged_network, slug)
+    if !contains(each.value.tagged_network, slug) && slug != each.value.native_network
   ]
-  tagged_vlan_mgmt = length(each.value.tagged_network) == 0 ? "block_all" : "custom"
-  poe_mode         = each.value.poe_mode # now honours your locals (remember: "off", not "none")
+
+  poe_mode = each.value.poe_mode
 }
 
 # Rename from the previous refactor's address to the flat slug-keyed address
