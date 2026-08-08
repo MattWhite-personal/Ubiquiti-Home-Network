@@ -83,6 +83,7 @@ locals {
     { for slug, net in local.networks : slug => unifi_network.network[slug].id },
     { default = data.unifi_network.lan_network.id }
   )
+  all_taggable_slugs = keys(local.networks) # temp whilst tf doesnt correctly set tagged vlans
 
   port_profiles = {
     trunk_wifi = {
