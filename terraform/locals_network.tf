@@ -1,13 +1,17 @@
 locals {
   devices = {
     fw01 = {
-      name  = "wf-cam-fw01",
-      mac   = "a8:9c:6c:10:4b:de"
-      ports = {}
+      name         = "wf-cam-fw01",
+      mac          = "a8:9c:6c:10:4b:de",
+      mgmt_network = null,
+      mgmt_ip      = null,
+      ports        = {}
     }
     sw01 = {
-      name = "wf-cam-sw01",
-      mac  = "90:41:b2:e4:c2:5b",
+      name         = "wf-cam-sw01",
+      mac          = "90:41:b2:e4:c2:5b",
+      mgmt_network = null,
+      mgmt_ip      = null,
       ports = {
         1 = "trunk_wifi"
         2 = "access_matt_work"
@@ -17,9 +21,11 @@ locals {
       }
     }
     ap01 = {
-      name  = "wf-cam-ap01",
-      mac   = "58:d6:1f:84:35:0b"
-      ports = {}
+      name         = "wf-cam-ap01",
+      mac          = "58:d6:1f:84:35:0b",
+      mgmt_network = "mgmt",
+      mgmt_ip      = 3
+      ports        = {}
     }
   }
 
