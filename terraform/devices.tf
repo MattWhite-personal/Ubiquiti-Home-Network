@@ -1,3 +1,9 @@
+import {
+  for_each = local.devices
+  to       = unifi_device.device[each.key]
+  id       = each.value.mac
+}
+
 resource "unifi_device" "device" {
   for_each = local.devices
   mac      = each.value.mac
