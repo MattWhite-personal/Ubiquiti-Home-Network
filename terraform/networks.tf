@@ -31,7 +31,8 @@ resource "unifi_port_profile" "port_profile" {
   tagged_networkconf_ids = [
     for slug in each.value.tagged_network : local.network_id[slug]
   ]
-  poe_mode = each.value.poe_mode # now honours your locals (remember: "off", not "none")
+  tagged_vlan_mgmt = length(each.value.tagged_network) == 0 ? "block_all" : "custom"
+  poe_mode         = each.value.poe_mode # now honours your locals (remember: "off", not "none")
 }
 
 # Rename from the previous refactor's address to the flat slug-keyed address
