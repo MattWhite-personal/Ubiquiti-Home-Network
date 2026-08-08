@@ -55,7 +55,7 @@ resource "unifi_port_profile" "port_profile" {
 
   tagged_vlan_mgmt = length(each.value.tagged_network) == 0 ? "block_all" : "custom"
 
-  excluded_networkconf_ids = [
+  excluded_networkconf_ids = length(each.value.tagged_network) == 0 ? null : [
     for slug in local.all_taggable_slugs :
     local.network_id[slug]
     if !contains(each.value.tagged_network, slug) && slug != each.value.native_network
