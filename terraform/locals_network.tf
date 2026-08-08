@@ -1,4 +1,19 @@
 locals {
+  devices = {
+    fw01 = {
+      name = "wf-cam-fw01",
+      mac  = "a8:9c:6c:10:4b:de"
+    }
+    sw01 = {
+      name = "wf-cam-sw01",
+      mac  = "90:41:b2:e4:c2:5b"
+    }
+    ap01 = {
+      name = "wf-cam-ap01",
+      mac  = "58:d6:1f:84:35:0b"
+    }
+  }
+
   # ── DECLARATIVE SURFACE — edit this to add/change networks ──
   # Keyed by a stable slug. The slug never changes even if you
   # rename the network or renumber the VLAN — downstream refs stay valid.
