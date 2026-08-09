@@ -14,7 +14,7 @@ locals {
           port_profile = "trunk_wired"
         },
         2 = {
-          name         = "access_intel-nuc",
+          name         = "trunk_intel-nuc",
           enabled      = true,
           port_profile = "trunk_nuc"
         },
