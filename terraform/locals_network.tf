@@ -7,7 +7,23 @@ locals {
       mgmt_ip      = null,
       stp_priority = 4096,
       stp_version  = "rstp",
-      ports        = {}
+      ports = {
+        # 1 = {
+        #  name = uplink_wf-cam-sw01
+        #  enabled = true
+        #  port_profile = "trunk_wired"
+        # },
+        #2 = {
+        #  name         = access_intel-nuc,
+        #  enabled      = true,
+        #  port_profile = "access_default"
+        #},
+        #3 = {
+        #  name         = access_arlo-base-station,
+        #  enabled      = true,
+        #  port_profile = "access_default"
+        #}
+      }
     }
     sw01 = {
       name         = "wf-cam-sw01",
@@ -22,20 +38,20 @@ locals {
           enabled      = true,
           port_profile = "trunk_wifi"
 
-        }
+        },
         2 = {
           name         = "access_mjw-office-monitor",
           enabled      = true,
           port_profile = "access_personal"
-        }
+        },
         3 = {
-          name         = "disabled_NOT-IN-USE",
-          enabled      = false,
-        }
+          name    = "disabled_NOT-IN-USE",
+          enabled = false
+        },
         4 = {
-          name         = "disabled_NOT-IN-USE",
-          enabled      = false,
-        }
+          name    = "disabled_NOT-IN-USE",
+          enabled = false
+        },
         # 5 = {
         #  name = uplink_wf-cam-fw01
         #  speed = 2500
