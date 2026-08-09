@@ -22,7 +22,13 @@ locals {
           port_profile = "trunk_wifi"
 
         }
-        # 2 = "access_matt_work"
+        2 = {
+          name         = "access_personal"
+          port_profile = "access_personal"
+        }
+        #3 = {
+        #  name = "access_matt_work"
+        #}
         # 3 = "shutdown"
         # 4 = "shutdown"
         # 5 = {
@@ -164,6 +170,18 @@ locals {
     access_matt_work = {
       state          = "enabled"
       native_network = "matt-work"
+      tagged_network = []
+      poe_mode       = "auto"
+    }
+    access_default = {
+      state          = "enabled"
+      native_network = "default"
+      tagged_network = []
+      poe_mode       = "auto"
+    }
+    access_personal = {
+      state          = "enabled"
+      native_network = "personal"
       tagged_network = []
       poe_mode       = "auto"
     }
