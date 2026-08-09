@@ -12,12 +12,12 @@ resource "unifi_device" "device" {
   stp_priority    = each.value.stp_priority
   stp_version     = each.value.stp_version
   config_network = each.value.mgmt_ip != null ? {
-    type       = "static"
-    ip         = "10.140.254.${each.value.mgmt_ip}"
-    netmask    = "255.255.255.0"
-    gateway    = "10.140.254.1"
-    dns1       = "192.168.178.11"
-    dns_suffix = "gilbert.road"
+    type      = "static"
+    ip        = "10.140.254.${each.value.mgmt_ip}"
+    netmask   = "255.255.255.0"
+    gateway   = "10.140.254.1"
+    dns1      = "192.168.178.11"
+    dnssuffix = "gilbert.road"
   } : null
   dynamic "port_override" {
     for_each = each.value.ports
