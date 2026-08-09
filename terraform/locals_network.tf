@@ -8,11 +8,11 @@ locals {
       stp_priority = 4096,
       stp_version  = "rstp",
       ports = {
-        # 1 = {
-        #  name = "uplink_wf-cam-sw01",
-        #  enabled = true,
-        #  port_profile = "trunk_wired"
-        # },
+        1 = {
+          name         = "uplink_wf-cam-sw01",
+          enabled      = true,
+          port_profile = "trunk_wired"
+        },
         2 = {
           name         = "access_intel-nuc",
           enabled      = true,
@@ -60,11 +60,11 @@ locals {
           name    = "disabled_NOT-IN-USE",
           enabled = false
         },
-        # 5 = {
-        #  name = uplink_wf-cam-fw01
-        #  speed = 2500
-        #  poe = "auto"
-        #}
+        5 = {
+          name         = "uplink_wf-cam-fw01",
+          enabled      = true,
+          port_profile = "trunk_wired"
+        }
       }
     }
     ap01 = {
