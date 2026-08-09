@@ -1,10 +1,11 @@
 resource "unifi_network" "network" {
   for_each = local.networks
 
-  name       = each.value.name
-  purpose    = "corporate" #all networks corporate - guest handled in WLAN config
-  vlan       = each.value.vlan_id
-  auto_scale = false
+  name               = each.value.name
+  purpose            = "corporate" #all networks corporate - guest handled in WLAN config
+  vlan               = each.value.vlan_id
+  auto_scale         = false
+  setting_preference = each.value.setting_preference
 
   # IPv4 — gateway-in-CIDR form (UniFi expects the gateway here, not the network address)
   subnet = local.network_facts[each.key].ipv4_gateway
