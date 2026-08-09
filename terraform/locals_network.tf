@@ -16,7 +16,7 @@ locals {
         2 = {
           name         = "access_intel-nuc",
           enabled      = true,
-          port_profile = "access_default"
+          port_profile = "trunk_nuc"
         },
         3 = {
           name         = "access_arlo-base-station",
