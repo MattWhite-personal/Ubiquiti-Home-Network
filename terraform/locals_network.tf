@@ -6,7 +6,7 @@ locals {
       mgmt_network = null,
       mgmt_ip      = null,
       stp_priority = 4096,
-      stp_version  = rstp,
+      stp_version  = "rstp",
       ports        = {}
     }
     sw01 = {
@@ -15,7 +15,7 @@ locals {
       mgmt_network = "mgmt",
       mgmt_ip      = null,
       stp_priority = 8192,
-      stp_version  = rstp,
+      stp_version  = "rstp",
       ports = {
         # 1 = "trunk_wifi"
         # 2 = "access_matt_work"
@@ -30,7 +30,7 @@ locals {
       mgmt_network = "mgmt",
       mgmt_ip      = 3
       stp_priority = 16384,
-      stp_version  = rstp,
+      stp_version  = "rstp",
       ports        = {}
     }
   }
