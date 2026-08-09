@@ -19,11 +19,11 @@ resource "unifi_device" "device" {
     dns1      = "192.168.178.11"
     dnssuffix = "gilbert.road"
   } : null
-  dynamic "port_override" {
-    for_each = each.value.ports != null ? each.value.ports : {}
-    content {
-      index           = port_override.key
-      port_profile_id = unifi_port_profile.port_profile[port_override.value].id
-    }
-  }
+  #dynamic "port_override" {
+  #  for_each = each.value.ports != null ? each.value.ports : {}
+  #  content {
+  #    index           = port_override.key
+  #    port_profile_id = unifi_port_profile.port_profile[port_override.value].id
+  #  }
+  #}
 }
