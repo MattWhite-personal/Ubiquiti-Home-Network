@@ -9,20 +9,28 @@ locals {
       stp_version  = "rstp",
       ports = {
         # 1 = {
-        #  name = uplink_wf-cam-sw01
-        #  enabled = true
+        #  name = "uplink_wf-cam-sw01",
+        #  enabled = true,
         #  port_profile = "trunk_wired"
         # },
-        #2 = {
-        #  name         = access_intel-nuc,
-        #  enabled      = true,
-        #  port_profile = "access_default"
-        #},
-        #3 = {
-        #  name         = access_arlo-base-station,
-        #  enabled      = true,
-        #  port_profile = "access_default"
+        2 = {
+          name         = "access_intel-nuc",
+          enabled      = true,
+          port_profile = "access_default"
+        },
+        3 = {
+          name         = "access_arlo-base-station",
+          enabled      = true,
+          port_profile = "access_default"
+        },
+        #4 = {
+        #  name = "wan_port"
         #}
+        5 = {
+          name    = "disabled_NOT-IN-USE",
+          enabled = false
+        }
+
       }
     }
     sw01 = {
