@@ -45,7 +45,8 @@ resource "unifi_network" "network" {
 resource "unifi_port_profile" "port_profile" {
   for_each = local.port_profiles
 
-  name = each.key
+  name        = each.key
+  full_duplex = true
 
   forward = (
     each.value.state == "disabled" ? "disabled" :
