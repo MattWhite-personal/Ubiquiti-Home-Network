@@ -68,6 +68,18 @@ resource "unifi_port_profile" "port_profile" {
   poe_mode = each.value.poe_mode
 }
 
+resource "unifi_port_profile" "disabled" {
+  name               = "disabled"
+  full_duplex        = true
+  dot1x_ctrl         = "auto"
+  setting_preference = "manual"
+
+  forward               = "disabled"
+  native_networkconf_id = local.network_id["default"]
+  tagged_vlan_mgmt      = "block_all"
+  poe_mode              = "off"
+}
+
 # Rename from the previous refactor's address to the flat slug-keyed address
 moved {
   from = unifi_network.vlan["mgmt"]

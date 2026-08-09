@@ -19,16 +19,19 @@ locals {
       ports = {
         1 = {
           name         = "uplink_wf-cam-ap01"
+          enabled      = true
           port_profile = "trunk_wifi"
 
         }
         2 = {
           name         = "access_mjw-office-monitor"
+          enabled      = true
           port_profile = "access_personal"
         }
-        #3 = {
-        #  name = "access_matt_work"
-        #}
+        3 = {
+          name    = "disabled_NOT-IN-USE"
+          enabled = false
+        }
         # 3 = "shutdown"
         # 4 = "shutdown"
         # 5 = {
