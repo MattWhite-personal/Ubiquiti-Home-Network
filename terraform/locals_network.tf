@@ -23,7 +23,7 @@ locals {
 
         }
         2 = {
-          name         = "access_personal"
+          name         = "access_mjw-office-monitor"
           port_profile = "access_personal"
         }
         #3 = {
