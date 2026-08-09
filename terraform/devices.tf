@@ -33,6 +33,11 @@ resource "unifi_device" "device" {
         local.network_id[slug]
         if contains(port_override.value.tagged_vlans, slug)
       ]
+      excluded_networkconf_ids = length(port_override.value.tagged_vlans) == 0 ? null : [
+        for slug in local.all_taggable_slugs :
+        local.network_id[slug]
+        if !contains(port_override.value.tagged_vlans, slug) && slug != port_override.value.native_vlan
+      ]
     }
   }
 }
