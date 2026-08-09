@@ -22,9 +22,9 @@ resource "unifi_device" "device" {
   dynamic "port_override" {
     for_each = each.value.ports != null ? each.value.ports : {}
     content {
-      index                 = port_override.key
-      name                  = port_override.value.name
-      port_profile_id       = local.port_profile_id[port_override.value.port_profile]
+      index           = port_override.key
+      name            = port_override.value.name
+      port_profile_id = local.port_profile_id[port_override.value.port_profile]
     }
   }
 }
