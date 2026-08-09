@@ -24,7 +24,7 @@ resource "unifi_device" "device" {
     content {
       index           = port_override.key
       name            = port_override.value.name
-      port_profile_id = local.port_profiles[port_override.value.port_profile]
+      port_profile_id = unifi_port_profile.port_profile[port_override.value.port_profile].id
     }
   }
 }
