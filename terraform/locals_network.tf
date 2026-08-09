@@ -43,7 +43,7 @@ locals {
       vlan_id   = 999
       name      = "Management"
       purpose   = "corporate"
-      dhcp_mode = "relay"
+      dhcp_mode = "none"
       octet     = 254
       zone      = "management"
     }
