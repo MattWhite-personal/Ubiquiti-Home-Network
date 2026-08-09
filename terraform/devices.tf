@@ -26,6 +26,7 @@ resource "unifi_device" "device" {
       name                  = port_override.value.name
       speed                 = port_override.value.speed
       poe_mode              = port_override.value.poe_mode
+      forward               = length(port_override.value.tagged_vlans) == 0 ? "native" : "customize"
       native_networkconf_id = local.network_id[port_override.value.native_vlan]
       tagged_networkconf_ids = length(port_override.value.tagged_vlans) == 0 ? null : [
         for slug in local.all_taggable_slugs :
