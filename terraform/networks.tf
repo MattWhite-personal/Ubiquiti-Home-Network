@@ -49,7 +49,7 @@ resource "unifi_port_profile" "port_profile" {
   full_duplex        = true
   dot1x_ctrl         = "auto"
   setting_preference = "manual"
-  stp_port_mode      = true
+  #stp_port_mode      = true
 
   forward = (
     each.value.state == "disabled" ? "disabled" :
