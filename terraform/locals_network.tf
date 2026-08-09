@@ -31,10 +31,11 @@ locals {
         3 = {
           name         = "disabled_NOT-IN-USE",
           enabled      = false,
-          port_profile = "access_personal"
         }
-        # 3 = "shutdown"
-        # 4 = "shutdown"
+        4 = {
+          name         = "disabled_NOT-IN-USE",
+          enabled      = false,
+        }
         # 5 = {
         #  name = uplink_wf-cam-fw01
         #  speed = 2500
