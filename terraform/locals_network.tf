@@ -188,11 +188,5 @@ locals {
       tagged_network = []
       poe_mode       = "auto"
     }
-    disabled = {
-      state          = "disabled"
-      native_network = "default"
-      tagged_network = []
-      poe_mode       = "off"
-    }
   }
 }
