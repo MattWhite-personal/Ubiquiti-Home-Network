@@ -9,8 +9,8 @@ resource "unifi_device" "device" {
   mac             = each.value.mac
   name            = each.value.name
   mgmt_network_id = each.value.mgmt_network != null ? local.network_id[each.value.mgmt_network] : null
-  stp_priority    = each.value.stp_priority
-  stp_version     = each.value.stp_version
+  #stp_priority    = each.value.stp_priority
+  #stp_version     = each.value.stp_version
   config_network = each.value.mgmt_ip != null ? {
     type      = "static"
     ip        = "10.140.254.${each.value.mgmt_ip}"
