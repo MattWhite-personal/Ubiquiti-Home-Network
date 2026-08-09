@@ -17,11 +17,29 @@ locals {
       stp_priority = 8192,
       stp_version  = "rstp",
       ports = {
-        # 1 = "trunk_wifi"
+        1 = {
+          name        = uplink_wf-cam-ap01
+          speed       = 2500
+          poe_mode    = "off"
+          native_vlan = "default"
+          tagged_vlans = [
+            "guest",
+            "iot",
+            "matt-work",
+            "jen-work",
+            "personal",
+            "mgmt"
+          ]
+
+        }
         # 2 = "access_matt_work"
         # 3 = "shutdown"
         # 4 = "shutdown"
-        # 5 = "trunk_wired"
+        # 5 = {
+        #  name = uplink_wf-cam-fw01
+        #  speed = 2500
+        #  poe = "auto"
+        #}
       }
     }
     ap01 = {
