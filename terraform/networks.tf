@@ -39,7 +39,7 @@ resource "unifi_network" "network" {
   dhcp_v6_server = {
     enabled     = false
     dns_auto    = false
-    dns_servers = [var.pihols_ipv6]
+    dns_servers = [var.pihole_ipv6]
   }
 }
 
