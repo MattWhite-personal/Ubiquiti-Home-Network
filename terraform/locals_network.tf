@@ -29,8 +29,8 @@ locals {
       mac          = "58:d6:1f:84:35:0b",
       mgmt_network = "mgmt",
       mgmt_ip      = 3
-      stp_priority = 16384,
-      stp_version  = "rstp",
+      stp_priority = null,
+      stp_version  = null,
       ports        = {}
     }
   }
