@@ -27,7 +27,7 @@ resource "unifi_network" "network" {
     start       = cidrhost(local.network_facts[each.key].ipv4_subnet, 10)
     stop        = cidrhost(local.network_facts[each.key].ipv4_subnet, 250)
     dns_servers = each.value.dhcp_mode == "server" ? [var.pihole_ipv4] : null
-    leasetime   = each.value.dhcp_mode == "server" ? "1h0m0s" : null
+    leasetime   = each.value.dhcp_mode == "server" ? "8h0m0s" : null
     boot = {
       enabled = false
     }
