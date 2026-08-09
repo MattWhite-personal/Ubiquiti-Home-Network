@@ -21,6 +21,14 @@ resource "unifi_network" "network" {
     enabled = true
     servers = [var.kea_ipv4]
   } : null
+
+  dhcp_server = each.value.dhcp_mode == "relay" ? null : {
+    enabled = each.value.dhcp_mode == "server" ? true : false
+    start   = each.value.dhcp_mode == "server" ? var.dhcp_start : null
+    stop    = each.value.dhcp_mode == "server" ? var.dhcp_stop : null
+    dns_servers = each.value.dhcp_mode == "server" ? [var.pihole_ipv4] : null
+    leasetime = "1h0m0s"
+  }
 }
 
 ###############################################################################
