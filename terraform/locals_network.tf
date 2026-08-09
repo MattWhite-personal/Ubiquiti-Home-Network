@@ -13,7 +13,7 @@ locals {
       name         = "wf-cam-sw01",
       mac          = "90:41:b2:e4:c2:5b",
       mgmt_network = "mgmt",
-      mgmt_ip      = null,
+      mgmt_ip      = 2,
       stp_priority = 8192,
       stp_version  = "rstp",
       ports = {
