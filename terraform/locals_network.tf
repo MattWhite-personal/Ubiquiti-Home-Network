@@ -18,18 +18,8 @@ locals {
       stp_version  = "rstp",
       ports = {
         1 = {
-          name        = "uplink_wf-cam-ap01"
-          speed       = 2500
-          poe_mode    = "off"
-          native_vlan = "default"
-          tagged_vlans = [
-            "guest",
-            "iot",
-            "matt-work",
-            "jen-work",
-            "personal",
-            "mgmt"
-          ]
+          name         = "uplink_wf-cam-ap01"
+          port_profile = "trunk_wifi"
 
         }
         # 2 = "access_matt_work"
