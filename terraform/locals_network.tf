@@ -18,7 +18,7 @@ locals {
       stp_version  = "rstp",
       ports = {
         1 = {
-          name        = uplink_wf-cam-ap01
+          name        = "uplink_wf-cam-ap01"
           speed       = 2500
           poe_mode    = "off"
           native_vlan = "default"
