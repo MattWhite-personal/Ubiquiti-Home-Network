@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   terraform-unit-tests-push:
-    #if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
     name: "Terraform Unit Tests (Push)"
     runs-on: [self-hosted, homelab, ubiquiti]
 
@@ -70,7 +70,7 @@ jobs:
       #    category: checkov
 
   terraform-unit-tests-pr:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.actor != 'github-actions[bot]'
     name: "Terraform Unit Tests (PR)"
     runs-on: [self-hosted, homelab, ubiquiti]
 
