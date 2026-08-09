@@ -9,13 +9,16 @@ resource "unifi_device" "device" {
   mac             = each.value.mac
   name            = each.value.name
   mgmt_network_id = each.value.mgmt_network != null ? local.network_id[each.value.mgmt_network] : null
-  #config_network = each.value.mgmt_network != null ? {
-  #  type    = "static"
-  #  ip      = cidrhost(local.network_facts[each.value.mgmt_network].ipv4_subnet, each.value.mgmt_ip)
-  #  netmask = cidrnetmask(local.network_facts[each.value.mgmt_network].ipv4_subnet)
-  #  gateway = split("/", local.network_facts[each.value.mgmt_network].ipv4_gateway)[0]
-  #  dns1    = var.pihole_ipv4
-  #} : null
+  stp_priority    = each.value.stp_priority
+  stp_version     = each.value.stp_version
+  config_network = each.value.mgmt_ip != null ? {
+    type      = "static"
+    ip        = "10.140.254.${each.value.mgmt_ip}"
+    netmask   = "255.255.255.0"
+    gateway   = "10.140.254.1"
+    dns1      = "192.168.178.11"
+    dnssuffix = "gilbert.road"
+  } : null
   dynamic "port_override" {
     for_each = each.value.ports
     content {

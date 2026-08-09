@@ -5,16 +5,20 @@ locals {
       mac          = "a8:9c:6c:10:4b:de",
       mgmt_network = null,
       mgmt_ip      = null,
+      stp_priority = 4096,
+      stp_version  = "rstp",
       ports        = {}
     }
     sw01 = {
       name         = "wf-cam-sw01",
       mac          = "90:41:b2:e4:c2:5b",
       mgmt_network = "mgmt",
-      mgmt_ip      = null,
+      mgmt_ip      = 2,
+      stp_priority = 8192,
+      stp_version  = "rstp",
       ports = {
-        1 = "trunk_wifi"
-        2 = "access_matt_work"
+        # 1 = "trunk_wifi"
+        # 2 = "access_matt_work"
         # 3 = "shutdown"
         # 4 = "shutdown"
         # 5 = "trunk_wired"
@@ -25,6 +29,8 @@ locals {
       mac          = "58:d6:1f:84:35:0b",
       mgmt_network = "mgmt",
       mgmt_ip      = 3
+      stp_priority = 16384,
+      stp_version  = "rstp",
       ports        = {}
     }
   }
@@ -34,60 +40,67 @@ locals {
   # rename the network or renumber the VLAN — downstream refs stay valid.
   networks = {
     mgmt = {
-      vlan_id   = 999
-      name      = "Management"
-      purpose   = "corporate"
-      dhcp_mode = "relay"
-      octet     = 254
-      zone      = "management"
+      vlan_id            = 999
+      name               = "Management"
+      purpose            = "corporate"
+      dhcp_mode          = "none"
+      octet              = 254
+      zone               = "management"
+      setting_preference = "manual"
     }
     iot = {
-      vlan_id   = 30
-      name      = "IoT"
-      purpose   = "corporate"
-      dhcp_mode = "relay"
-      octet     = 30
-      zone      = "infrastructure"
+      vlan_id            = 30
+      name               = "IoT"
+      purpose            = "corporate"
+      dhcp_mode          = "relay"
+      octet              = 30
+      zone               = "infrastructure"
+      setting_preference = "manual"
     }
     guest = {
-      vlan_id   = 666
-      name      = "Guest"
-      purpose   = "corporate"
-      dhcp_mode = "relay"
-      octet     = 166
-      zone      = "guest"
+      vlan_id            = 666
+      name               = "Guest"
+      purpose            = "corporate"
+      dhcp_mode          = "relay"
+      octet              = 166
+      zone               = "guest"
+      setting_preference = "manual"
     }
     matt-work = {
-      vlan_id   = 21
-      name      = "Matt's Work"
-      purpose   = "corporate"
-      dhcp_mode = "relay"
-      octet     = 21
-      zone      = "work"
+      vlan_id            = 21
+      name               = "Matt's Work"
+      purpose            = "corporate"
+      dhcp_mode          = "relay"
+      octet              = 21
+      zone               = "work"
+      setting_preference = "manual"
     }
     jen-work = {
-      vlan_id   = 22
-      name      = "Jen's Work"
-      purpose   = "corporate"
-      dhcp_mode = "relay"
-      octet     = 22
-      zone      = "work"
+      vlan_id            = 22
+      name               = "Jen's Work"
+      purpose            = "corporate"
+      dhcp_mode          = "relay"
+      octet              = 22
+      zone               = "work"
+      setting_preference = "manual"
     }
     personal = {
-      vlan_id   = 40
-      name      = "Personal devices"
-      purpose   = "corporate"
-      dhcp_mode = "relay"
-      octet     = 40
-      zone      = "personal"
+      vlan_id            = 40
+      name               = "Personal devices"
+      purpose            = "corporate"
+      dhcp_mode          = "relay"
+      octet              = 40
+      zone               = "personal"
+      setting_preference = "manual"
     }
     server = {
-      vlan_id   = 10
-      name      = "Server"
-      purpose   = "corporate"
-      dhcp_mode = "relay"
-      octet     = 10
-      zone      = "infrastructure"
+      vlan_id            = 10
+      name               = "Server"
+      purpose            = "corporate"
+      dhcp_mode          = "relay"
+      octet              = 10
+      zone               = "infrastructure"
+      setting_preference = "manual"
     }
   }
   zone_names = distinct([for net in local.networks : net.zone])
