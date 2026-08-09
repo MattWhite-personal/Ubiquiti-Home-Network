@@ -47,7 +47,7 @@ resource "unifi_port_profile" "port_profile" {
 
   name               = each.key
   full_duplex        = true
-  dot1xcontrol       = "auto"
+  dot1x_ctrl         = "auto"
   setting_preference = "manual"
 
   forward = (
