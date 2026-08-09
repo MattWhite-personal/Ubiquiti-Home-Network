@@ -1,75 +1,119 @@
 # Ubiquiti-Home-Network
 
-Terraform-managed network configuration for the home lab. UDR7 + AP + future switch, applied via GitHub Actions using a self-hosted runner on the NUC.
+Terraform-managed UniFi network configuration for the White family home network.
+
+This repository manages UniFi configuration for a UDR7-based home network, including VLANs, WLANs, firewall rules, and RADIUS-enabled wireless authentication. Terraform state is stored in Azure Blob Storage and changes are applied through GitHub Actions on a self-hosted homelab runner.
+
+## What this repo manages
+
+- UniFi Dream Router 7 (UDR7) configuration
+- VLAN definitions and IP addressing
+- Wireless network profiles and PSK/RADIUS settings
+- Zone-based firewall rules
+- UniFi object tagging and device configuration
+
+## What this repo does not manage
+
+- NUC-hosted DHCP/DNS services (Kea + Pi-hole)
+- Physical switch inventory or port profile configuration yet
+- Local UniFi controller installation
 
 ## Architecture
 
-- Router / gateway: UniFi Dream Router 7 (UDR7) at 192.168.178.1 during legacy transition
-- AP: U7 Pro, adopted to UDR7
-- DHCP / DNS: Kea + Pi-hole on the NUC — not managed by this repo
-- Firewall: Zone-Based Firewall (ZBF) on UDR7 — managed here
+- Router / gateway: UniFi Dream Router 7 (UDR7)
+- Access point: U7 Pro adopted into the UDR7
+- Terraform backend: Azure Storage blob in `rg-whitefam-terraform`, container `tfstate`, key `unifi-homelab.tfstate`
+- CI/CD: GitHub Actions on a self-hosted runner tagged `[self-hosted, homelab, ubiquiti]`
+- Providers:
+  - `ubiquiti-community/unifi` `0.55.0`
+  - `hashicorp/azurerm` `~> 4.0`
+- Terraform required version: `~> 1.9`
 
-Full network design intent documented in docs/design.md (TODO).
+## Repository layout
 
-## How this repo runs
-
-All Terraform runs happen in GitHub Actions, applied by the self-hosted runner on wf-cam-nuc01. Local terraform apply is not the intended workflow.
-
-- Plan: opens automatically on every pull request
-- Apply: triggers on merge to main
-
-### Authentication
-
-- Azure (state backend): OIDC federation from GitHub Actions to Entra ID service principal to Azure Storage
-- UniFi (config target): API key from 1Password, injected via env vars at runtime
-
-No long-lived secrets are stored in this repo or in GitHub repository secrets, beyond the 1Password service account token used to fetch everything else at runtime.
-
-## Layout
-
-``` plaintext
-├── main.tf              # Terraform config, backend, provider blocks
-├── variables.tf         # Shared input variables (marked sensitive where relevant)
-├── terraform.tfvars.example
+```plaintext
+.
 ├── .github/workflows/
-│   ├── runner-smoke-test.yml
-│   └── terraform.yml    # plan-on-PR + apply-on-main
-└── docs/
-    └── design.md        # (TODO) IP scheme, VLAN plan, firewall zones
+│   ├── tf-plan-apply.yml
+│   ├── tf-drift.yml
+│   ├── tf-import.yml
+│   ├── tf-unit-tests.yml
+│   └── runner-smoketest.yml
+├── LICENSE
+├── README.md
+└── terraform/
+    ├── main.tf
+    ├── variables.tf
+    ├── output.tf
+    ├── networks.tf
+    ├── wlan.tf
+    ├── firewall.tf
+    ├── radius.tf
+    ├── devices.tf
+    ├── locals_network.tf
+    ├── locals_wifi.tf
+    ├── data.tf
+    └── .terraform.lock.hcl
 ```
 
-Domain-specific resources will land in their own .tf files as the config grows:
+- `terraform/main.tf` configures the backend, required providers, and root module.
+- `terraform/variables.tf` declares the shared network inputs and sensitive values.
+- `terraform/output.tf` exposes computed network facts.
+- `terraform/networks.tf`, `wlan.tf`, `firewall.tf`, and `radius.tf` define the UniFi-managed network objects.
 
-- networks.tf — VLAN definitions
-- wifi.tf — WLAN networks + PSK references
-- firewall.tf — ZBF rules
-- port_profiles.tf — switch port config (once the switch arrives)
+## Workflow
+
+- Pull requests to `main` run `terraform plan`.
+- Merges to `main` run `terraform apply`.
+- The workflow uses GitHub Actions, a self-hosted runner, and 1Password to inject secrets at runtime.
+
+### Secrets and authentication
+
+- Azure backend authentication is done via OIDC and GitHub secrets:
+  - `AZURE_CLIENT_ID`
+  - `AZURE_SUBSCRIPTION_ID`
+  - `AZURE_TENANT_ID`
+- 1Password service account token is stored in `OP_SERVICE_ACCOUNT_TOKEN`.
+- The workflow loads UniFi and Terraform values from 1Password:
+  - `UNIFI_API`
+  - `UNIFI_API_KEY`
+  - `TF_VAR_*` values for IP addressing and Wi-Fi credentials
+- No long-lived UniFi API credentials are stored in the repo.
 
 ## Local development
 
-Rarely needed. If you must:
+Local `terraform apply` is not the intended workflow. Prefer the GitHub Actions path for all changes.
 
-1. az login and confirm you can access the Azure subscription that owns the state backend.
-2. cp terraform.tfvars.example terraform.tfvars and fill in real values from 1Password homelab-cicd/unifi-terraform-vars.
-3. export UNIFI_API_URL="<https://192.168.178.1>" and export UNIFI_API_KEY="$(op read 'op://homelab-cicd/unifi-network-local-api/credential')".
-4. terraform init — resolves providers and connects to Azure Storage.
-5. terraform plan — shows intended changes without applying.
+If you need to inspect or plan locally:
 
-Do not terraform apply locally against main's state. Push a branch, open a PR, let the runner do it. This preserves apply-audit-trail in Actions.
+1. Log in to Azure and verify access to the storage backend.
+2. Populate a local `terraform.tfvars` with secrets from 1Password.
+3. Set `UNIFI_API_URL` and `UNIFI_API_KEY` locally.
+4. In `terraform/`, run:
+   - `terraform init`
+   - `terraform fmt -check`
+   - `terraform plan`
 
-## Runbooks
+Avoid running `terraform apply` locally against the shared backend unless you fully understand the state coordination risks.
 
-- Rotate UniFi API key: 1Password unifi-network-local-api → regenerate in UDR7 UI → update 1Password → next workflow run picks up the new key automatically.
-- Rotate 1Password service account token: covered by homelab-cicd/Runbook — Service account rotation (60-day cadence).
-- Recover if state is corrupted: state versioning is enabled on the Azure Storage account; roll back via az storage blob undelete or portal.
+## Notes
+
+- The backend is configured in `terraform/main.tf` with Azure storage account `stwhitefamterraform`.
+- The UniFi provider is configured with `allow_insecure = true` to support self-signed or locally trusted controller certificates.
+- Network addressing is derived from the `ipv4_supernet` and `ipv6_supernet` inputs.
+
+## Runbook
+
+- Rotate UniFi API key: regenerate in UDR7, update 1Password, and let the workflow pick up the new key.
+- Rotate 1Password service account token: update `OP_SERVICE_ACCOUNT_TOKEN` in GitHub secrets.
+- Recover corrupted state: use Azure Storage versioning to restore the blob if needed.
 
 ## References
 
-- filipowm/unifi provider
-- UDR7 firmware: 10.4.57 (as of first import)
-- Related repos:
-  - homelab-infra — Docker Compose stacks on the NUC (including this runner)
+- Ubiquiti Terraform provider: `ubiquiti-community/unifi`
+- Azure Terraform provider: `hashicorp/azurerm`
+- Self-hosted runner and 1Password secrets injection pattern
 
-## Change log
+## Changelog
 
 - 2026-07-11 — initial scaffold; UDR7 baseline imported from UI wizard.
