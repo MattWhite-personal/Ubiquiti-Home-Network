@@ -5,8 +5,8 @@ locals {
       mac          = "a8:9c:6c:10:4b:de",
       mgmt_network = null,
       mgmt_ip      = null,
-      stp_priority  = 4096,
-      stp_version = rstp,
+      stp_priority = 4096,
+      stp_version  = rstp,
       ports        = {}
     }
     sw01 = {
@@ -14,8 +14,8 @@ locals {
       mac          = "90:41:b2:e4:c2:5b",
       mgmt_network = "mgmt",
       mgmt_ip      = null,
-      stp_priority  = 8192,
-      stp_version = rstp,
+      stp_priority = 8192,
+      stp_version  = rstp,
       ports = {
         # 1 = "trunk_wifi"
         # 2 = "access_matt_work"
@@ -29,8 +29,8 @@ locals {
       mac          = "58:d6:1f:84:35:0b",
       mgmt_network = "mgmt",
       mgmt_ip      = 3
-      stp_priority  = 16384,
-      stp_version = rstp,
+      stp_priority = 16384,
+      stp_version  = rstp,
       ports        = {}
     }
   }
