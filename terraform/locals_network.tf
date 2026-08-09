@@ -29,8 +29,9 @@ locals {
           port_profile = "access_personal"
         }
         3 = {
-          name    = "disabled_NOT-IN-USE"
-          enabled = false
+          name         = "disabled_NOT-IN-USE"
+          enabled      = false
+          port_profile = "access_personal"
         }
         # 3 = "shutdown"
         # 4 = "shutdown"
