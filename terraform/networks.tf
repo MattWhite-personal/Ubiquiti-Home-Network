@@ -35,6 +35,12 @@ resource "unifi_network" "network" {
       enabled = false
     }
   }
+
+  dhcp_v6_server = {
+    enabled     = false
+    dns_auto    = false
+    dns_servers = [var.pihols_ipv6]
+  }
 }
 
 ###############################################################################
