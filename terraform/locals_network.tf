@@ -145,6 +145,15 @@ locals {
       zone               = "infrastructure"
       setting_preference = "manual"
     }
+    dhcp-server-test = {
+      vlan_id            = 11
+      name               = "DHCP Server Test"
+      purpose            = "corporate"
+      dhcp_mode          = "server"
+      octet              = 11
+      zone               = "infrastructure"
+      setting_preference = "manual"
+    }
   }
   zone_names = distinct([for net in local.networks : net.zone])
   zone_membership = {
