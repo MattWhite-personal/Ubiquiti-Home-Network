@@ -169,14 +169,16 @@ locals {
     }
   }
   network_id = merge(
-    { for slug, net in local.networks : slug => unifi_network.network[slug].id },
-    { default = data.unifi_network.lan_network.id }
+    { default = data.unifi_network.lan_network.id },
+    { for slug, net in local.networks : slug => unifi_network.network[slug].id }
   )
   all_taggable_slugs = keys(local.networks) # temp whilst tf doesnt correctly set tagged vlans
 
   zone_id = merge(
-    { for slug, net in local.zones : slug => unifi_firewall_zone.zone[slug].id },
-    { external = data.unifi_firewall_zone.external.id }
+    { internal = data.unifi_firewall_zone.internal.id },
+    { external = data.unifi_firewall_zone.external.id },
+    { vpn = data.unifi_firewall_zone.vpn.id },
+    { for slug, net in local.zones : slug => unifi_firewall_zone.zone[slug].id }
   )
 
   port_profiles = {
