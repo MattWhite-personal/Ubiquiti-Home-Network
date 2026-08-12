@@ -23,6 +23,6 @@ data "unifi_firewall_zone" "external" {
 data "unifi_firewall_zone" "internal" {
   name = "Internal"
 }
-data "unifi_firewall_zone" "vpn" {
-  name = "VPN"
-}
+#data "unifi_firewall_zone" "vpn" {
+#  name = "VPN"
+#}

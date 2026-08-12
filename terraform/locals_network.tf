@@ -177,7 +177,6 @@ locals {
   zone_id = merge(
     { internal = data.unifi_firewall_zone.internal.id },
     { external = data.unifi_firewall_zone.external.id },
-    { vpn = data.unifi_firewall_zone.vpn.id },
     { for slug, net in local.zones : slug => unifi_firewall_zone.zone[slug].id }
   )
 
