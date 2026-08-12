@@ -78,7 +78,7 @@ locals {
       ports        = {}
     }
   }
-  
+
   # Define the security zones that will be referenced in the infrastructure. This is a declarative surface for the network topology.
   zones = {
     management     = {}
