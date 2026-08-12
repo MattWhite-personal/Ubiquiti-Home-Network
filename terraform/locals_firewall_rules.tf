@@ -15,8 +15,8 @@ locals {
       protocol    = "all"
       port        = null
       description = "Block matt-work <-> jen-work east-west traffic (intra-zone default is ALLOW, so this exception is required)"
-      source      = { zones = ["work"], networks = ["matt_work"], ips = [] }
-      destination = { zones = ["work"], networks = ["jen_work"], ips = [] }
+      source      = { zones = ["work"], networks = ["matt-work"], ips = [] }
+      destination = { zones = ["work"], networks = ["jen-work"], ips = [] }
     }
 
     # "matt-work AND server -> IoT" — written as TWO flows instead of one
@@ -26,7 +26,7 @@ locals {
       protocol    = "tcp_udp"
       port        = null
       description = "Allow matt-work devices to reach IoT devices (cross-zone: work -> infrastructure)"
-      source      = { zones = ["work"], networks = ["matt_work"], ips = [] }
+      source      = { zones = ["work"], networks = ["matt-work"], ips = [] }
       destination = { zones = ["infrastructure"], networks = ["iot"], ips = [] }
     }
     "server-to-iot" = {
@@ -63,7 +63,7 @@ locals {
     # --- add new flows here as your infrastructure changes ---
     # e.g. "personal-to-jen-work-only":
     #   source      = { zones = ["personal"], networks = [], ips = [] }
-    #   destination = { zones = ["work"], networks = ["jen_work"], ips = [] }
+    #   destination = { zones = ["work"], networks = ["jen-work"], ips = [] }
   }
 
   expanded_flows = merge([
