@@ -16,6 +16,7 @@ resource "unifi_firewall_policy" "flow" {
   name        = "TF-${each.key}"
   action      = each.value.action
   protocol    = each.value.protocol
+  ip_version  = "BOTH"
   description = each.value.description
   logging     = true
 
