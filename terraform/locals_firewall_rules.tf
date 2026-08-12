@@ -7,7 +7,7 @@ locals {
       port        = 53
       description = "Permit DNS to Pi-hole (v4/v6) from any LAN zone"
       source      = { zones = ["any"], networks = [], ips = [] }
-      destination = { zones = ["Internal"], networks = [], ips = [var.pihole_ipv4, var.pihole_ipv6] }
+      destination = { zones = ["internal"], networks = [], ips = [var.pihole_ipv4, var.pihole_ipv6] }
     }
 
     "permit-pihole-to-internet" = {
@@ -15,7 +15,7 @@ locals {
       protocol    = "tcp_udp"
       port        = 53
       description = "Permit Pi-hole to reach the internet for DNS resolution (v4/v6)"
-      source      = { zones = ["Internal"], networks = [], ips = [var.pihole_ipv4, var.pihole_ipv6] }
+      source      = { zones = ["internal"], networks = [], ips = [var.pihole_ipv4, var.pihole_ipv6] }
       destination = { zones = ["external"], networks = [], ips = [] }
     }
 
