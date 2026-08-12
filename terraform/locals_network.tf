@@ -1,4 +1,5 @@
 locals {
+  # Define devices that need to be added into management. This is a declarative surface for the network topology.
   devices = {
     fw01 = {
       name         = "wf-cam-fw01",
@@ -50,7 +51,7 @@ locals {
         2 = {
           name         = "access_mjw-office-monitor",
           enabled      = true,
-          port_profile = "access_personal"
+          port_profile = "access_matt_work"
         },
         3 = {
           name    = "disabled_NOT-IN-USE",
@@ -77,7 +78,8 @@ locals {
       ports        = {}
     }
   }
-
+  
+  # Define the security zones that will be referenced in the infrastructure. This is a declarative surface for the network topology.
   zones = {
     management     = {}
     infrastructure = {}
