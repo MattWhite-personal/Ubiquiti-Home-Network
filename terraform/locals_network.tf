@@ -172,6 +172,11 @@ locals {
   )
   all_taggable_slugs = keys(local.networks) # temp whilst tf doesnt correctly set tagged vlans
 
+  zone_id = merge(
+    { for slug, net in local.zones : slug => unifi_firewall_zone.zone[slug].id },
+    { external = data.unifi_firewall_zone.external.id }
+  )
+
   port_profiles = {
     trunk_wifi = {
       state          = "enabled"
