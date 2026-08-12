@@ -38,18 +38,18 @@ locals {
       destination = { zones = ["infrastructure"], networks = ["iot"], ips = [] }
     }
 
-    "dot-block-egress" = {
-      action      = "BLOCK"
-      protocol    = "tcp_udp"
-      port        = 853
-      description = "Block DNS-over-TLS egress to the internet from any LAN zone — closes the encrypted DNS-bypass path (plain DNS is redirected to Pi-hole via NAT, see header)"
-      source      = { zones = ["any"], networks = [], ips = [] }
-      destination = { zones = ["external"], networks = [], ips = [] }
-      # ORDER-SENSITIVE if you also have a broad "LAN -> External, ALLOW
-      # everything" policy for general internet access — the check block
-      # below will flag that combination; verify order in the Zone Matrix
-      # UI if so.
-    }
+    #"dot-block-egress" = {
+    #  action      = "BLOCK"
+    #  protocol    = "tcp_udp"
+    #  port        = 853
+    #  description = "Block DNS-over-TLS egress to the internet from any LAN zone — closes the encrypted DNS-bypass path (plain DNS is redirected to Pi-hole via NAT, see header)"
+    #  source      = { zones = ["any"], networks = [], ips = [] }
+    #  destination = { zones = ["external"], networks = [], ips = [] }
+    #  # ORDER-SENSITIVE if you also have a broad "LAN -> External, ALLOW
+    #  # everything" policy for general internet access — the check block
+    #  # below will flag that combination; verify order in the Zone Matrix
+    #  # UI if so.
+    #}
 
     #"doh-block-known-ips" = {
     #  action      = "BLOCK"
