@@ -5,7 +5,7 @@ resource "unifi_network" "network" {
   purpose            = "corporate" #all networks corporate - guest handled in WLAN config
   vlan               = each.value.vlan_id
   auto_scale         = false
-  setting_preference = each.value.setting_preference
+  setting_preference = "manual"
 
   # IPv4 — gateway-in-CIDR form (UniFi expects the gateway here, not the network address)
   subnet = local.network_facts[each.key].ipv4_gateway
