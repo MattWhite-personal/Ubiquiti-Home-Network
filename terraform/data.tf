@@ -16,3 +16,7 @@ data "unifi_radius_profile" "udr7" {
 data "unifi_port_profile" "disabled" {
   name = "port_disabled"
 }
+
+data "unifi_firewall_zone" "external" {
+  name = "External"
+}

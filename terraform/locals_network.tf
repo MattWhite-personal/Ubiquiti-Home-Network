@@ -1,4 +1,5 @@
 locals {
+  # Define devices that need to be added into management. This is a declarative surface for the network topology.
   devices = {
     fw01 = {
       name         = "wf-cam-fw01",
@@ -50,7 +51,7 @@ locals {
         2 = {
           name         = "access_mjw-office-monitor",
           enabled      = true,
-          port_profile = "access_personal"
+          port_profile = "access_matt_work"
         },
         3 = {
           name    = "disabled_NOT-IN-USE",
@@ -78,84 +79,77 @@ locals {
     }
   }
 
+  # Define the security zones that will be referenced in the infrastructure. This is a declarative surface for the network topology.
+  zones = {
+    management     = {}
+    infrastructure = {}
+    guest          = {}
+    work           = {}
+    personal       = {}
+  }
+
   # ── DECLARATIVE SURFACE — edit this to add/change networks ──
   # Keyed by a stable slug. The slug never changes even if you
   # rename the network or renumber the VLAN — downstream refs stay valid.
   networks = {
     mgmt = {
-      vlan_id            = 999
-      name               = "Management"
-      purpose            = "corporate"
-      dhcp_mode          = "none"
-      octet              = 254
-      zone               = "management"
-      setting_preference = "manual"
+      vlan_id   = 999
+      name      = "Management"
+      dhcp_mode = "none"
+      octet     = 254
+      zone      = "management"
     }
     iot = {
-      vlan_id            = 30
-      name               = "IoT"
-      purpose            = "corporate"
-      dhcp_mode          = "relay"
-      octet              = 30
-      zone               = "infrastructure"
-      setting_preference = "manual"
+      vlan_id   = 30
+      name      = "IoT"
+      dhcp_mode = "relay"
+      octet     = 30
+      zone      = "infrastructure"
     }
     guest = {
-      vlan_id            = 666
-      name               = "Guest"
-      purpose            = "corporate"
-      dhcp_mode          = "relay"
-      octet              = 166
-      zone               = "guest"
-      setting_preference = "manual"
+      vlan_id   = 666
+      name      = "Guest"
+      dhcp_mode = "relay"
+      octet     = 166
+      zone      = "guest"
     }
     matt-work = {
-      vlan_id            = 21
-      name               = "Matt's Work"
-      purpose            = "corporate"
-      dhcp_mode          = "relay"
-      octet              = 21
-      zone               = "work"
-      setting_preference = "manual"
+      vlan_id   = 21
+      name      = "Matt's Work"
+      dhcp_mode = "relay"
+      octet     = 21
+      zone      = "work"
     }
     jen-work = {
-      vlan_id            = 22
-      name               = "Jen's Work"
-      purpose            = "corporate"
-      dhcp_mode          = "relay"
-      octet              = 22
-      zone               = "work"
-      setting_preference = "manual"
+      vlan_id   = 22
+      name      = "Jen's Work"
+      dhcp_mode = "relay"
+      octet     = 22
+      zone      = "work"
     }
     personal = {
-      vlan_id            = 40
-      name               = "Personal devices"
-      purpose            = "corporate"
-      dhcp_mode          = "relay"
-      octet              = 40
-      zone               = "personal"
-      setting_preference = "manual"
+      vlan_id   = 40
+      name      = "Personal devices"
+      dhcp_mode = "relay"
+      octet     = 40
+      zone      = "personal"
     }
     server = {
-      vlan_id            = 10
-      name               = "Server"
-      purpose            = "corporate"
-      dhcp_mode          = "relay"
-      octet              = 10
-      zone               = "infrastructure"
-      setting_preference = "manual"
+      vlan_id   = 10
+      name      = "Server"
+      dhcp_mode = "relay"
+      octet     = 10
+      zone      = "infrastructure"
     }
     dhcp-server-test = {
-      vlan_id            = 11
-      name               = "DHCP Server Test"
-      purpose            = "corporate"
-      dhcp_mode          = "server"
-      octet              = 11
-      zone               = "infrastructure"
-      setting_preference = "manual"
+      vlan_id   = 11
+      name      = "DHCP Server Test"
+      dhcp_mode = "server"
+      octet     = 11
+      zone      = "infrastructure"
     }
   }
-  zone_names = distinct([for net in local.networks : net.zone])
+  zone_names = keys(local.zones)
   zone_membership = {
     for zone in local.zone_names : zone => [
       for slug, net in local.networks : slug if net.zone == zone
@@ -179,6 +173,11 @@ locals {
     { default = data.unifi_network.lan_network.id }
   )
   all_taggable_slugs = keys(local.networks) # temp whilst tf doesnt correctly set tagged vlans
+
+  zone_id = merge(
+    { for slug, net in local.zones : slug => unifi_firewall_zone.zone[slug].id },
+    { external = data.unifi_firewall_zone.external.id }
+  )
 
   port_profiles = {
     trunk_wifi = {
