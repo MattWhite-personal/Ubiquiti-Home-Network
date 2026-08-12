@@ -13,12 +13,13 @@ resource "unifi_firewall_zone" "zone" {
 resource "unifi_firewall_policy" "flow" {
   for_each = local.expanded_flows
 
-  name        = "TF-${each.key}"
-  action      = each.value.action
-  protocol    = each.value.protocol
-  ip_version  = "BOTH"
-  description = each.value.description
-  logging     = true
+  name                 = "TF-${each.key}"
+  action               = each.value.action
+  protocol             = each.value.protocol
+  ip_version           = "BOTH"
+  description          = each.value.description
+  create_allow_respond = each.value.action == "ALLOW" ? true : false
+  logging              = true
 
   source = {
     zone_id         = local.zone_id[each.value.source_zone]
