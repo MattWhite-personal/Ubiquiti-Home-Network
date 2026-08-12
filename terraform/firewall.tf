@@ -27,11 +27,11 @@ resource "unifi_firewall_policy" "flow" {
   }
 
   destination = {
-    zone_id             = local.all_zone_ids[each.value.destination_zone]
-    matching_target     = length(each.value.destination.ips) > 0 ? "IP" : length(each.value.destination.networks) > 0 ? "NETWORK" : "ANY"
-    network_ids         = length(each.value.destination.networks) > 0 ? [for slug in each.value.destination.networks : local.network_id[slug]] : null
-    ips                 = length(each.value.destination.ips) > 0 ? each.value.destination.ips : null
-    port                = each.value.port
-    port_matching_type  = each.value.port != null ? "SPECIFIC" : "ANY"
+    zone_id            = local.all_zone_ids[each.value.destination_zone]
+    matching_target    = length(each.value.destination.ips) > 0 ? "IP" : length(each.value.destination.networks) > 0 ? "NETWORK" : "ANY"
+    network_ids        = length(each.value.destination.networks) > 0 ? [for slug in each.value.destination.networks : local.network_id[slug]] : null
+    ips                = length(each.value.destination.ips) > 0 ? each.value.destination.ips : null
+    port               = each.value.port
+    port_matching_type = each.value.port != null ? "SPECIFIC" : "ANY"
   }
 }
