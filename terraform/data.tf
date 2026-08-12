@@ -20,3 +20,9 @@ data "unifi_port_profile" "disabled" {
 data "unifi_firewall_zone" "external" {
   name = "External"
 }
+data "unifi_firewall_zone" "internal" {
+  name = "Internal"
+}
+#data "unifi_firewall_zone" "vpn" {
+#  name = "VPN"
+#}
