@@ -54,8 +54,9 @@ locals {
           port_profile = "access_matt_work"
         },
         3 = {
-          name    = "disabled_NOT-IN-USE",
-          enabled = false
+          name         = "access_optiplex-5080",
+          enabled      = true
+          port_profile = "access_personal"
         },
         4 = {
           name    = "disabled_NOT-IN-USE",
