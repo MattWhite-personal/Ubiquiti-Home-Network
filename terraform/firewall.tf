@@ -18,7 +18,7 @@ resource "unifi_firewall_policy" "flow" {
   protocol             = each.value.protocol
   ip_version           = "BOTH"
   description          = each.value.description
-  create_allow_respond = each.value.action == "ALLOW" ? true : false
+  create_allow_respond = each.value.action == "ALLOW" && each.value.destination_zone != "external"
   logging              = true
 
   source = {
