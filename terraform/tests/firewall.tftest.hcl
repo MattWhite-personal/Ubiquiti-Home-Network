@@ -37,3 +37,33 @@ run "return_traffic_policy" {
     error_message = "Block policies must not request an automatic return rule."
   }
 }
+
+run "zone_network_order" {
+  command = apply
+
+  plan_options {
+    target = [unifi_firewall_zone.zone]
+  }
+
+  override_resource {
+    target = unifi_network.network["dhcp-server-test"]
+    values = { id = "network-c" }
+  }
+
+  override_resource {
+    target = unifi_network.network["iot"]
+    values = { id = "network-a" }
+  }
+
+  override_resource {
+    target = unifi_network.network["server"]
+    values = { id = "network-b" }
+  }
+
+  assert {
+    condition = unifi_firewall_zone.zone["infrastructure"].network_ids == tolist([
+      "network-a", "network-b", "network-c"
+    ])
+    error_message = "Infrastructure zone must contain its network IDs in sorted order."
+  }
+}
