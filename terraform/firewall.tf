@@ -7,7 +7,7 @@ resource "unifi_firewall_zone" "hotspot" {
 resource "unifi_firewall_zone" "zone" {
   for_each    = local.zone_membership
   name        = title(each.key) # "Trusted", "Iot", "Guest"
-  network_ids = [for slug in each.value : unifi_network.network[slug].id]
+  network_ids = sort([for slug in each.value : unifi_network.network[slug].id])
 }
 
 resource "unifi_firewall_policy" "flow" {
@@ -18,7 +18,7 @@ resource "unifi_firewall_policy" "flow" {
   protocol             = each.value.protocol
   ip_version           = "BOTH"
   description          = each.value.description
-  create_allow_respond = each.value.action == "ALLOW" ? true : false
+  create_allow_respond = each.value.action == "ALLOW" && each.value.destination_zone != "external"
   logging              = true
 
   source = {

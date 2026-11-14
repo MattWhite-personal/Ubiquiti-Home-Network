@@ -45,6 +45,9 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
+      - name: Terraform Test
+        run: terraform test
+
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
         id: fmt_check
@@ -90,6 +93,9 @@ jobs:
       # Validate terraform files
       - name: Terraform Validate
         run: terraform validate
+
+      - name: Terraform Test
+        run: terraform test
 
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
