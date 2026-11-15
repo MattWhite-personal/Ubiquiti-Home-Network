@@ -6,12 +6,14 @@ resource "unifi_wlan" "psk" {
   security      = "wpapsk"
   passphrase    = each.value.psk
   network_id    = unifi_network.network[each.value.network_slug].id
-  ap_group_ids  = [data.unifi_ap_group.default.id]
+  ap_group      = { ids = [data.unifi_ap_group.default.id] }
   user_group_id = data.unifi_client_qos_rate.default.id
   l2_isolation  = each.value.is_guest
 
-  wpa3_support    = each.value.wpa3 != "off"
-  wpa3_transition = each.value.wpa3 == "transition"
+  wpa3 = {
+    support    = each.value.wpa3 != "off"
+    transition = each.value.wpa3 == "transition"
+  }
   pmf_mode = each.value.wpa3 == "transition" ? "optional" : (
     each.value.wpa3 == "only" ? "required" : "disabled"
   )
@@ -25,19 +27,21 @@ resource "unifi_wlan" "psk" {
 resource "unifi_wlan" "enterprise" {
   for_each = { for k, v in local.wlans : k => v if v.auth == "enterprise" }
 
-  name              = each.value.name
-  is_guest          = each.value.is_guest
-  security          = "wpaeap"
-  radius_profile_id = data.unifi_radius_profile.udr7.id
-  ap_group_ids      = [data.unifi_ap_group.default.id]
-  user_group_id     = data.unifi_client_qos_rate.default.id
-  wlan_band         = "5g"
-  wlan_bands        = ["5g", "6g"]
-  mlo_enabled       = true
-  network_id        = data.unifi_network.lan_network.id
+  name          = each.value.name
+  is_guest      = each.value.is_guest
+  security      = "wpaeap"
+  radius        = { profile_id = data.unifi_radius_profile.udr7.id }
+  ap_group      = { ids = [data.unifi_ap_group.default.id] }
+  user_group_id = data.unifi_client_qos_rate.default.id
+  wlan_band     = "5g"
+  wlan_bands    = ["5g", "6g"]
+  mlo_enabled   = true
+  network_id    = data.unifi_network.lan_network.id
 
-  wpa3_support    = each.value.wpa3 != "off"
-  wpa3_transition = each.value.wpa3 == "transition"
+  wpa3 = {
+    support    = each.value.wpa3 != "off"
+    transition = each.value.wpa3 == "transition"
+  }
   pmf_mode = each.value.wpa3 == "transition" ? "optional" : (
     each.value.wpa3 == "only" ? "required" : "disabled"
   )
