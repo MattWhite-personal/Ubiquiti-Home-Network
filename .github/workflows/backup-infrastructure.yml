@@ -1,0 +1,51 @@
+name: "UniFi backup infrastructure"
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Apply the reviewed infrastructure plan"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  id-token: write
+
+defaults:
+  run:
+    working-directory: backup-infrastructure
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  TF_VAR_storage_account_name: ${{ vars.UNIFI_BACKUP_STORAGE_ACCOUNT }}
+  TF_VAR_resource_group_name: ${{ vars.UNIFI_BACKUP_RESOURCE_GROUP }}
+  TF_VAR_location: ${{ vars.UNIFI_BACKUP_LOCATION }}
+  TF_PLUGIN_CACHE_DIR: "/opt/tf-plugin-cache"
+
+jobs:
+  infrastructure:
+    if: github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, homelab, ubiquiti]
+    concurrency:
+      group: unifi-network-maintenance
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_wrapper: false
+      - run: terraform init
+      - run: terraform fmt -check
+      - run: terraform validate
+      - if: '!inputs.apply'
+        run: terraform plan -no-color
+      - if: inputs.apply
+        run: |
+          plan="$(mktemp "$RUNNER_TEMP/unifi-backup-infra-plan.XXXXXX")"
+          trap 'rm -f -- "$plan"' EXIT
+          terraform plan -no-color -out="$plan"
+          terraform apply -auto-approve "$plan"

@@ -36,7 +36,11 @@ terraform.rc
 *.pem
 *.key
 *.crt
+*.unifi
+*.unf
 secrets/
+__pycache__/
+*.pyc
 
 # ─── Editor / OS ────────────────────────────────────────────
 .DS_Store

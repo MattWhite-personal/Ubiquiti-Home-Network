@@ -1,0 +1,29 @@
+name: "UniFi system backup"
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  backup:
+    if: github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, homelab, ubiquiti]
+    concurrency:
+      group: unifi-network-maintenance
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Back up and apply retention
+        uses: ./.github/actions/unifi-backup
+        with:
+          azure-client-id: ${{ secrets.AZURE_BACKUP_CLIENT_ID }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          storage-account: ${{ vars.UNIFI_BACKUP_STORAGE_ACCOUNT }}
+          operation: backup-and-prune
