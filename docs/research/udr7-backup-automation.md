@@ -37,7 +37,7 @@ Conclusion: the regular console backup setting is not exposed by the provider as
 ## Implications
 
 - "Codify regular backup settings in Terraform": not supported by the current provider; keep it a documented manual setting (see `docs/runbooks/unifi-backup-recovery.md`).
-- "Force a cloud backup before apply": no supported, documented API was found. The unofficial system download endpoint is not proof of a cloud backup and introduces admin credentials into CI. The runbook retains a manual pre-change backup check before the owner merges; it does not add an apply-approval workflow.
+- "Force a cloud backup before apply": no supported, documented API was found. The repository's experimental client uses the unofficial system download endpoint for a separate Azure copy, not a cloud backup. It introduces a dedicated local account into CI and requires the runbook's bootstrap and live verification before it can be relied on.
 
 ## Gaps
 

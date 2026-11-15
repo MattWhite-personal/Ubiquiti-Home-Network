@@ -1,0 +1,55 @@
+name: "Store UniFi system backup"
+description: "Download, upload and verify a UniFi OS system backup."
+inputs:
+  azure-client-id:
+    required: true
+    description: "Backup service principal client ID."
+  azure-tenant-id:
+    required: true
+    description: "Azure tenant ID."
+  azure-subscription-id:
+    required: true
+    description: "Azure subscription ID."
+  op-token:
+    required: true
+    description: "1Password service account token."
+  storage-account:
+    required: true
+    description: "Backup storage account name."
+  operation:
+    required: true
+    description: "backup or backup-and-prune."
+runs:
+  using: composite
+  steps:
+    - name: Load UniFi backup credentials
+      id: credentials
+      uses: 1password/load-secrets-action@70062d7a876d3eb6334754fa26efd2fbd90c32f2 # v5
+      env:
+        OP_SERVICE_ACCOUNT_TOKEN: ${{ inputs.op-token }}
+        UNIFI_BACKUP_URL: op://homelab-cicd/unifi-system-backup/url
+        UNIFI_BACKUP_USERNAME: op://homelab-cicd/unifi-system-backup/username
+        UNIFI_BACKUP_PASSWORD: op://homelab-cicd/unifi-system-backup/password
+        UNIFI_BACKUP_CA_PEM: op://homelab-cicd/unifi-system-backup/ca_certificate
+
+    - name: Authenticate to Azure
+      uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
+      env:
+        AZURE_CONFIG_DIR: ${{ runner.temp }}/azure-${{ github.run_id }}-${{ github.run_attempt }}
+      with:
+        client-id: ${{ inputs.azure-client-id }}
+        tenant-id: ${{ inputs.azure-tenant-id }}
+        subscription-id: ${{ inputs.azure-subscription-id }}
+
+    - name: Create and verify backup
+      shell: bash
+      env:
+        UNIFI_BACKUP_URL: ${{ steps.credentials.outputs.UNIFI_BACKUP_URL }}
+        UNIFI_BACKUP_USERNAME: ${{ steps.credentials.outputs.UNIFI_BACKUP_USERNAME }}
+        UNIFI_BACKUP_PASSWORD: ${{ steps.credentials.outputs.UNIFI_BACKUP_PASSWORD }}
+        UNIFI_BACKUP_CA_PEM: ${{ steps.credentials.outputs.UNIFI_BACKUP_CA_PEM }}
+        UNIFI_BACKUP_STORAGE_ACCOUNT: ${{ inputs.storage-account }}
+        BACKUP_OPERATION: ${{ inputs.operation }}
+        AZURE_CONFIG_DIR: ${{ runner.temp }}/azure-${{ github.run_id }}-${{ github.run_attempt }}
+        TMPDIR: ${{ runner.temp }}
+      run: python3 "$GITHUB_ACTION_PATH/../../../scripts/unifi_backup.py" "$BACKUP_OPERATION"
