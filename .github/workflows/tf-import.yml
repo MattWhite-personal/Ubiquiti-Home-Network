@@ -51,6 +51,11 @@ jobs:
           TF_VAR_pihole_ipv6: op://homelab-cicd/unifi-terraform-vars/pihole_ipv6
           TF_VAR_kea_ipv4: op://homelab-cicd/unifi-terraform-vars/kea_ipv4
           TF_VAR_wifi_guest_psk: op://homelab-cicd/wifi-psk-guest/password
+          TF_VAR_wifi_iot_psk: op://homelab-cicd/wifi-psk-IoT/password
+          TF_VAR_radius_matt_work: op://homelab-cicd/radius-mjw-work/password
+          TF_VAR_radius_jen_work: op://homelab-cicd/radius-jws-work/password
+          TF_VAR_radius_matt_personal: op://homelab-cicd/radius-mjw-personal/password
+          TF_VAR_radius_jen_personal: op://homelab-cicd/radius-jws-personal/password
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
@@ -68,24 +73,33 @@ jobs:
         run: terraform init
 
       - name: Show target before import
+        env:
+          RESOURCE_ADDRESS: ${{ inputs.resource_address }}
+          RESOURCE_ID: ${{ inputs.resource_id }}
         run: |
           echo "Importing:"
-          echo "  Address: ${{ inputs.resource_address }}"
-          echo "  ID:      ${{ inputs.resource_id }}"
+          echo "  Address: $RESOURCE_ADDRESS"
+          echo "  ID:      $RESOURCE_ID"
 
       - name: Check if already in state
         id: check
+        env:
+          RESOURCE_ADDRESS: ${{ inputs.resource_address }}
         run: |
-          if terraform state list | grep -Fxq "${{ inputs.resource_address }}"; then
+          state_entries="$(terraform state list)"
+          if grep -Fxq -- "$RESOURCE_ADDRESS" <<< "$state_entries"; then
             echo "already_imported=true" >> "$GITHUB_OUTPUT"
-            echo "::warning::${{ inputs.resource_address }} is already in state — skipping import to stay idempotent."
+            echo "::warning::$RESOURCE_ADDRESS is already in state — skipping import to stay idempotent."
           else
             echo "already_imported=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Terraform Import
         if: steps.check.outputs.already_imported == 'false'
-        run: terraform import "${{ inputs.resource_address }}" "${{ inputs.resource_id }}"
+        env:
+          RESOURCE_ADDRESS: ${{ inputs.resource_address }}
+          RESOURCE_ID: ${{ inputs.resource_id }}
+        run: terraform import "$RESOURCE_ADDRESS" "$RESOURCE_ID"
       
       - name: Upload debug log
         if: always()
@@ -101,4 +115,6 @@ jobs:
           terraform plan -no-color -detailed-exitcode || true
 
       - name: State entry confirmation
-        run: terraform state show "${{ inputs.resource_address }}" || true
+        env:
+          RESOURCE_ADDRESS: ${{ inputs.resource_address }}
+        run: terraform state show "$RESOURCE_ADDRESS" || true
