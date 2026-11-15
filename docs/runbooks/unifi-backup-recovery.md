@@ -19,10 +19,13 @@ This runbook covers the UDR7 UniFi console and its managed network configuration
 Use the console's supported backup controls. Ubiquiti's current backup and migration guidance describes system configuration backups under **Settings > Control Plane > Backups**. Labels may differ by UniFi OS version; follow the current on-screen instructions and the linked Ubiquiti guide.
 
 1. Sign in to the UDR7 as an owner/admin and open **Settings > Control Plane > Backups**.
-2. Check the displayed backup history and timestamp. Create a new system configuration backup and use the console's **Download** action to save a local copy. Do not substitute a Network-only application export when a full console/system configuration backup is intended.
-3. Save the downloaded file to the owner's approved encrypted storage, outside this repository. Restrict access to people who need it. Do not commit it, attach it to a pull request, or put it in an unencrypted/shared location.
-4. From the storage location, confirm that the expected file is present and can be read/downloaded by the owner. Record its generation time, console/UniFi OS version, file name, size, and SHA-256 hash in the owner's protected operational record. A hash can identify later file changes; it does not prove that the backup contents are valid or restorable.
-5. Record whether an automatic cloud backup is enabled and its most recent timestamp. Treat it as an additional copy, not the only copy.
+2. Check that automatic cloud backups are enabled in the console's backup settings; enable them if needed. Ubiquiti says that, when enabled, cloud backups are generated weekly and before major updates. Check the backup history and most recent timestamp; enabling the setting alone does not establish that a backup exists.
+3. Before the change, create a new system configuration backup using the console controls and use **Download** to save a local copy. Do not substitute a Network-only application export when a full console/system configuration backup is intended.
+4. Save the downloaded file to the owner's approved encrypted storage, outside this repository. Restrict access to people who need it. Do not commit it, attach it to a pull request, or put it in an unencrypted/shared location.
+5. From the storage location, confirm that the expected file is present and can be read/downloaded by the owner. Record its generation time, console/UniFi OS version, file name, size, and SHA-256 hash in the owner's protected operational record. A hash can identify later file changes; it does not prove that the backup contents are valid or restorable.
+6. Record whether an automatic cloud backup is enabled and its most recent timestamp. Treat it as an additional copy, not the only copy.
+
+The current Terraform provider does not expose the console backup setting, and no supported API to initiate and confirm a cloud backup before apply was found. The apply workflow does **not** create or verify a backup; the owner must complete these checks before merging a network change. See [backup automation research](../research/udr7-backup-automation.md).
 
 These checks establish only that the console reported a backup and that a file was downloaded and can be retrieved. They do **not** verify the file's contents or successful restoration. Do not upload the backup to an unapproved service or attempt to unpack/edit it. A restoration test requires a compatible spare/replacement console and explicit owner authorization; it is not part of this runbook's non-destructive verification and has not been performed.
 
