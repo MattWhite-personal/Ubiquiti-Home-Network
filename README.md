@@ -106,7 +106,8 @@ Avoid running `terraform apply` locally against the shared backend unless you fu
 
 - Rotate UniFi API key: regenerate in UDR7, update 1Password, and let the workflow pick up the new key.
 - Rotate 1Password service account token: update `OP_SERVICE_ACCOUNT_TOKEN` in GitHub secrets.
-- Recover corrupted state: use Azure Storage versioning to restore the blob if needed.
+- Recover corrupted Terraform state: the existing guidance identifies Azure Storage blob versioning as a recovery option. Confirm versioning, retention, and access in Azure before relying on it; see [UniFi backup and physical recovery](docs/runbooks/unifi-backup-recovery.md) for the distinction between console backups and Terraform state.
+- UniFi console backup and physical recovery: follow [the recovery runbook](docs/runbooks/unifi-backup-recovery.md). A current backup and its restoreability have not yet been verified.
 
 ## References
 
