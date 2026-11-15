@@ -11,10 +11,13 @@ resource "unifi_network" "network" {
   subnet = local.network_facts[each.key].ipv4_gateway
 
   # IPv6 — static /64, gateway ::1, clients SLAAC
-  ipv6_interface_type            = "static"
-  ipv6_static_subnet             = local.network_facts[each.key].ipv6_gateway
-  ipv6_client_address_assignment = "slaac"
-  ipv6_ra                        = true
+  ipv6 = {
+    setting_preference        = "manual"
+    interface_type            = "static"
+    static_subnet             = local.network_facts[each.key].ipv6_gateway
+    client_address_assignment = "slaac"
+    ra                        = { enabled = true }
+  }
 
   # DHCP relay to Kea
   dhcp_relay = each.value.dhcp_mode == "relay" ? {
@@ -23,11 +26,13 @@ resource "unifi_network" "network" {
   } : null
 
   dhcp_server = each.value.dhcp_mode == "relay" ? null : {
-    enabled     = each.value.dhcp_mode == "server" ? true : false
-    start       = cidrhost(local.network_facts[each.key].ipv4_subnet, 10)
-    stop        = cidrhost(local.network_facts[each.key].ipv4_subnet, 250)
-    dns_servers = each.value.dhcp_mode == "server" ? [var.pihole_ipv4] : null
-    leasetime   = each.value.dhcp_mode == "server" ? "8h0m0s" : null
+    enabled   = each.value.dhcp_mode == "server" ? true : false
+    start     = cidrhost(local.network_facts[each.key].ipv4_subnet, 10)
+    stop      = cidrhost(local.network_facts[each.key].ipv4_subnet, 250)
+    leasetime = each.value.dhcp_mode == "server" ? "8h0m0s" : null
+    dns = {
+      servers = each.value.dhcp_mode == "server" ? [var.pihole_ipv4] : null
+    }
     boot = {
       enabled = false
     }
@@ -37,9 +42,11 @@ resource "unifi_network" "network" {
   }
 
   dhcp_v6_server = {
-    enabled     = false
-    dns_auto    = false
-    dns_servers = [var.pihole_ipv6]
+    enabled = false
+    dns = {
+      auto    = false
+      servers = [var.pihole_ipv6]
+    }
   }
 }
 
@@ -67,7 +74,7 @@ resource "unifi_port_profile" "port_profile" {
 
   name               = each.key
   full_duplex        = true
-  dot1x_ctrl         = "auto"
+  dot1x              = { ctrl = "auto" }
   setting_preference = "manual"
   #stp_port_mode      = true
 
